@@ -29,17 +29,5 @@ public abstract class BaseEntity {
         this.updatedAt = LocalDateTime.now();
     }
 
-    // private Boolean isActive = true;
-    // @PrePersist
-    // protected void onCreate() {
-    // createdAt = LocalDateTime.now();
-    // updatedAt = LocalDateTime.now();
-    // isActive = true;
-    // }
-
-    // @PreUpdate
-    // protected void onUpdate() {
-    // updatedAt = LocalDateTime.now();
-
-    // }
+    
 }

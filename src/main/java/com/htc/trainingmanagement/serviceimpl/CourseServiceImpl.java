@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import com.htc.trainingmanagement.dto.request.CourseRequestDto;
 import com.htc.trainingmanagement.dto.response.CourseResponseDto;
 import com.htc.trainingmanagement.entity.Course;
+import com.htc.trainingmanagement.exception.ResourceNotFoundException;
 import com.htc.trainingmanagement.repository.CourseRepository;
 import com.htc.trainingmanagement.service.CourseService;
 
@@ -36,10 +37,11 @@ public class CourseServiceImpl implements CourseService {
     }
 
     @Override
-    public CourseResponseDto getCourseById(Long courseId) {
+    public CourseResponseDto getCourseById(Long courseId) throws ResourceNotFoundException {
 
-        Course course = courseRepository.findById(courseId).orElseThrow(() ->
-            new RuntimeException("Course not found with id: " + courseId));
+        Course course = courseRepository.findById(courseId)
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        "Course not found with id: " + courseId));
 
         return convertToResponseDto(course);
     }
@@ -59,10 +61,11 @@ public class CourseServiceImpl implements CourseService {
     }
 
     @Override
-    public CourseResponseDto updateCourse(Long courseId, CourseRequestDto requestDto) {
+    public CourseResponseDto updateCourse(Long courseId, CourseRequestDto requestDto) throws ResourceNotFoundException {
 
-        Course course = courseRepository.findById(courseId).orElseThrow(() ->
-            new RuntimeException("Course not found with id: " + courseId));
+        Course course = courseRepository.findById(courseId)
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        "Course not found with id: " + courseId));
 
         course.setCourseName(requestDto.getCourseName());
         course.setDescription(requestDto.getDescription());
@@ -76,10 +79,11 @@ public class CourseServiceImpl implements CourseService {
     }
 
     @Override
-    public boolean deleteCourse(Long courseId) {
+    public boolean deleteCourse(Long courseId) throws ResourceNotFoundException {
 
-        Course course = courseRepository.findById(courseId).orElseThrow(() ->
-            new RuntimeException("Course not found with id: "+ courseId ));
+        Course course = courseRepository.findById(courseId)
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        "Course not found with id: " + courseId));
 
         courseRepository.delete(course);
 
@@ -95,7 +99,6 @@ public class CourseServiceImpl implements CourseService {
                 course.getDurationInDays(),
                 course.getMaxCapacity(),
                 course.getStatus(),
-                
                 course.getCreatedAt(),
                 course.getUpdatedAt());
     }

@@ -26,11 +26,16 @@ public class Course extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long courseId;
-    private String courseName;
-    private String description;
-    private Integer durationInDays;
-    private Integer maxCapacity;
+    private Long courseId; 
+
+    private String courseName; 
+
+    private String description; 
+
+    private Integer durationInDays; 
+
+    private Integer maxCapacity; // Maximum number of trainees allowed
+
     @Enumerated(EnumType.STRING)
-    private CourseStatus status;
+    private CourseStatus status; 
 }

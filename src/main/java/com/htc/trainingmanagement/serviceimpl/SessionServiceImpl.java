@@ -9,6 +9,7 @@ import com.htc.trainingmanagement.dto.request.SessionRequestDto;
 import com.htc.trainingmanagement.dto.response.SessionResponseDto;
 import com.htc.trainingmanagement.entity.Session;
 import com.htc.trainingmanagement.entity.TrainingBatch;
+import com.htc.trainingmanagement.exception.ResourceNotFoundException;
 import com.htc.trainingmanagement.repository.SessionRepository;
 import com.htc.trainingmanagement.repository.TrainingBatchRepository;
 import com.htc.trainingmanagement.service.SessionService;
@@ -24,9 +25,13 @@ public class SessionServiceImpl implements SessionService {
 
     @Override
     public SessionResponseDto createSession(
-            SessionRequestDto requestDto) {
+            SessionRequestDto requestDto) throws ResourceNotFoundException {
 
-        TrainingBatch trainingBatch = trainingBatchRepository.findById(requestDto.getTrainingBatchId()).orElseThrow();
+        TrainingBatch trainingBatch = trainingBatchRepository
+                .findById(requestDto.getTrainingBatchId())
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        "Training Batch not found with id: "
+                                + requestDto.getTrainingBatchId()));
 
         Session session = new Session();
 
@@ -44,9 +49,12 @@ public class SessionServiceImpl implements SessionService {
     }
 
     @Override
-    public SessionResponseDto getSessionById(Long sessionId) {
+    public SessionResponseDto getSessionById(Long sessionId) throws ResourceNotFoundException {
 
-        Session session = sessionRepository.findById(sessionId).orElseThrow();
+        Session session = sessionRepository.findById(sessionId)
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        "Session not found with id: "
+                                + sessionId));
 
         return convertToResponseDto(session);
     }
@@ -66,11 +74,20 @@ public class SessionServiceImpl implements SessionService {
     }
 
     @Override
-    public SessionResponseDto updateSession(Long sessionId, SessionRequestDto requestDto) {
+    public SessionResponseDto updateSession(
+            Long sessionId,
+            SessionRequestDto requestDto) throws ResourceNotFoundException {
 
-        Session session = sessionRepository.findById(sessionId).orElseThrow();
+        Session session = sessionRepository.findById(sessionId)
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        "Session not found with id: "
+                                + sessionId));
 
-        TrainingBatch trainingBatch = trainingBatchRepository.findById(requestDto.getTrainingBatchId()).orElseThrow();
+        TrainingBatch trainingBatch = trainingBatchRepository
+                .findById(requestDto.getTrainingBatchId())
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        "Training Batch not found with id: "
+                                + requestDto.getTrainingBatchId()));
 
         session.setSessionTitle(requestDto.getSessionTitle());
         session.setSessionDate(requestDto.getSessionDate());
@@ -86,9 +103,12 @@ public class SessionServiceImpl implements SessionService {
     }
 
     @Override
-    public boolean deleteSession(Long sessionId) {
+    public boolean deleteSession(Long sessionId) throws ResourceNotFoundException {
 
-        Session session = sessionRepository.findById(sessionId).orElseThrow();
+        Session session = sessionRepository.findById(sessionId)
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        "Session not found with id: "
+                                + sessionId));
 
         sessionRepository.delete(session);
 

@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.htc.trainingmanagement.dto.request.TrainingBatchRequestDto;
 import com.htc.trainingmanagement.dto.response.TrainingBatchResponseDto;
+import com.htc.trainingmanagement.exception.ResourceNotFoundException;
 import com.htc.trainingmanagement.serviceimpl.TrainingBatchServiceImpl;
 
 import jakarta.validation.Valid;
@@ -28,13 +29,14 @@ public class TrainingBatchController {
     private final TrainingBatchServiceImpl trainingBatchServiceImpl;
 
     @PostMapping("/add")
-    public ResponseEntity<TrainingBatchResponseDto> createTrainingBatch(TrainingBatchRequestDto requestDto) {
+    public ResponseEntity<TrainingBatchResponseDto> createTrainingBatch(@RequestBody TrainingBatchRequestDto requestDto)
+            throws ResourceNotFoundException {
         return ResponseEntity.status(HttpStatus.CREATED).body(trainingBatchServiceImpl.createTrainingBatch(requestDto));
     }
 
     @PutMapping("/update/{trainingBatchId}")
     public ResponseEntity<TrainingBatchResponseDto> updateTrainingBatch(@PathVariable Long trainingBatchId,
-            @Valid @RequestBody TrainingBatchRequestDto requestDto) {
+            @Valid @RequestBody TrainingBatchRequestDto requestDto) throws ResourceNotFoundException {
         return ResponseEntity.status(HttpStatus.OK)
                 .body(trainingBatchServiceImpl.updateTrainingBatch(trainingBatchId, requestDto));
     }
@@ -45,13 +47,14 @@ public class TrainingBatchController {
     }
 
     @GetMapping("/find/{trainingBatchId}")
-    public ResponseEntity<TrainingBatchResponseDto> findById(@PathVariable Long trainingBatchId) {
+    public ResponseEntity<TrainingBatchResponseDto> findById(@PathVariable Long trainingBatchId)
+            throws ResourceNotFoundException {
         return ResponseEntity.status(HttpStatus.OK)
                 .body(trainingBatchServiceImpl.getTrainingBatchById(trainingBatchId));
     }
 
     @DeleteMapping("/delete/{trainingBatchId}")
-    public ResponseEntity<Boolean> deleteById(@PathVariable Long trainingBatchId) {
+    public ResponseEntity<Boolean> deleteById(@PathVariable Long trainingBatchId) throws ResourceNotFoundException {
         return ResponseEntity.status(HttpStatus.OK).body(trainingBatchServiceImpl.deleteTrainingBatch(trainingBatchId));
     }
 }

@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.htc.trainingmanagement.dto.request.AttendanceRequestDto;
 import com.htc.trainingmanagement.dto.response.AttendanceResponseDto;
+import com.htc.trainingmanagement.exception.ResourceNotFoundException;
 import com.htc.trainingmanagement.serviceimpl.AttendanceServiceImpl;
 
 import jakarta.validation.Valid;
@@ -28,14 +29,16 @@ public class AttendanceController {
     private final AttendanceServiceImpl attendanceServiceImpl;
 
     @PostMapping("/add")
-    public ResponseEntity<AttendanceResponseDto> addAttendance(@Valid @RequestBody AttendanceRequestDto requestDto) {
+    public ResponseEntity<AttendanceResponseDto> addAttendance(@Valid @RequestBody AttendanceRequestDto requestDto)
+            throws ResourceNotFoundException {
         return ResponseEntity.status(HttpStatus.CREATED).body(attendanceServiceImpl.createAttendance(requestDto));
     }
 
     @PutMapping("/update/{attendanceId}")
     public ResponseEntity<AttendanceResponseDto> updateAttendance(@PathVariable Long attendanceId,
-            @Valid @RequestBody AttendanceRequestDto requestDto) {
-        return ResponseEntity.status(HttpStatus.OK).body(attendanceServiceImpl.updateAttendance(attendanceId, requestDto));
+            @Valid @RequestBody AttendanceRequestDto requestDto) throws ResourceNotFoundException {
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(attendanceServiceImpl.updateAttendance(attendanceId, requestDto));
     }
 
     @GetMapping("/all")
@@ -44,13 +47,14 @@ public class AttendanceController {
     }
 
     @GetMapping("/find/{attendanceId}")
-    public ResponseEntity<AttendanceResponseDto> findAttendanceById(@PathVariable Long attendanceId) {
+    public ResponseEntity<AttendanceResponseDto> findAttendanceById(@PathVariable Long attendanceId)
+            throws ResourceNotFoundException {
         return ResponseEntity.status(HttpStatus.OK).body(attendanceServiceImpl.getAttendanceById(attendanceId));
 
     }
 
     @DeleteMapping("/delete/{attendanceId}")
-    public ResponseEntity<Boolean> deleteById(@PathVariable Long attendanceId) {
+    public ResponseEntity<Boolean> deleteById(@PathVariable Long attendanceId) throws ResourceNotFoundException {
         return ResponseEntity.ok(attendanceServiceImpl.deleteAttendance(attendanceId));
     }
 

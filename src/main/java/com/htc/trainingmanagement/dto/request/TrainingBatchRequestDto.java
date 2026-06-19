@@ -33,10 +33,10 @@ public class TrainingBatchRequestDto {
     @Positive(message = "Capacity must be greater than 0")
     private Integer capacity;
 
-    @PositiveOrZero(message = "Enrolled count cannot be negative")
-    private Integer enrolledCount;
+    // @PositiveOrZero(message = "Enrolled count cannot be negative")
+    // private Integer enrolledCount;
 
-    @NotBlank(message = "Status is required")
+    @NotNull(message = "Status is required")
     private BatchStatus status;
 
     @NotNull(message = "Course ID is required")

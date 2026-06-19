@@ -20,7 +20,7 @@ public class TrainingBatchResponseDto {
     private LocalDate startDate;
     private LocalDate endDate;
     private Integer capacity;
-    private Integer enrolledCount;
+    // private Integer enrolledCount;
     private BatchStatus status;
 
     private Long courseId;

@@ -31,6 +31,7 @@ public class Attendance extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long attendanceId;
+
     private LocalDate attendanceDate;
     @Enumerated(EnumType.STRING)
     private AttendanceStatus attendanceStatus;

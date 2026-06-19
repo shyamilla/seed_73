@@ -31,12 +31,13 @@ public class TrainingBatch extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long trainingbatchId;
+    
     private String batchCode;
     private String batchName;
     private LocalDate startDate;
     private LocalDate endDate;
     private Integer capacity;
-    private Integer enrolledCount;
+    // private Integer enrolledCount;
     @Enumerated(EnumType.STRING)
     private BatchStatus status;
     @ManyToOne

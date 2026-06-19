@@ -24,7 +24,7 @@ public class SessionRequestDto {
     private LocalTime endTime;
     @NotBlank(message = "Topic for the session is mandatory.")
     private String topic;
-    @NotBlank(message = "Session Status is required.")
+    @NotNull(message = "Session Status is required.")
     private SessionStatus sessionStatus;
     @NotNull(message = "Training Batch ID is required.")
     private Long trainingBatchId;

@@ -28,12 +28,13 @@ public class Trainee extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long traineeId;
+    
     private String firstName;
     private String lastName;
     private String email;
     private String phoneNumber;
     private String department;
-    private String designation;
+    private String designation; // dev / tester/cloud
     private LocalDate joiningDate;
     @Enumerated(EnumType.STRING)
     private TraineeStatus status;

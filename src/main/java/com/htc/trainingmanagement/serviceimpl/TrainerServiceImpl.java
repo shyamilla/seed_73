@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import com.htc.trainingmanagement.dto.request.TrainerRequestDto;
 import com.htc.trainingmanagement.dto.response.TrainerResponseDto;
 import com.htc.trainingmanagement.entity.Trainer;
+import com.htc.trainingmanagement.exception.ResourceNotFoundException;
 import com.htc.trainingmanagement.repository.TrainerRepository;
 import com.htc.trainingmanagement.service.TrainerService;
 
@@ -36,9 +37,11 @@ public class TrainerServiceImpl implements TrainerService {
     }
 
     @Override
-    public TrainerResponseDto getTrainerById(Long trainerId) {
+    public TrainerResponseDto getTrainerById(Long trainerId) throws ResourceNotFoundException {
 
-        Trainer trainer = trainerRepository.findById(trainerId).orElseThrow();
+        Trainer trainer = trainerRepository.findById(trainerId)
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        "Trainer not found with id: " + trainerId));
 
         return convertToResponseDto(trainer);
     }
@@ -58,9 +61,13 @@ public class TrainerServiceImpl implements TrainerService {
     }
 
     @Override
-    public TrainerResponseDto updateTrainer(Long trainerId, TrainerRequestDto requestDto) {
+    public TrainerResponseDto updateTrainer(
+            Long trainerId,
+            TrainerRequestDto requestDto) throws ResourceNotFoundException {
 
-        Trainer trainer = trainerRepository.findById(trainerId).orElseThrow();
+        Trainer trainer = trainerRepository.findById(trainerId)
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        "Trainer not found with id: " + trainerId));
 
         trainer.setName(requestDto.getName());
         trainer.setEmail(requestDto.getEmail());
@@ -74,9 +81,11 @@ public class TrainerServiceImpl implements TrainerService {
     }
 
     @Override
-    public boolean deleteTrainer(Long trainerId) {
+    public boolean deleteTrainer(Long trainerId) throws ResourceNotFoundException {
 
-        Trainer trainer = trainerRepository.findById(trainerId).orElseThrow();
+        Trainer trainer = trainerRepository.findById(trainerId)
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        "Trainer not found with id: " + trainerId));
 
         trainerRepository.delete(trainer);
 

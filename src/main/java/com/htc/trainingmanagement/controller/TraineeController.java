@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.htc.trainingmanagement.dto.request.TraineeRequestDto;
 import com.htc.trainingmanagement.dto.response.TraineeResponseDto;
+import com.htc.trainingmanagement.exception.ResourceNotFoundException;
 import com.htc.trainingmanagement.serviceimpl.TraineeServiceImpl;
 
 import lombok.RequiredArgsConstructor;
@@ -31,14 +32,15 @@ public class TraineeController {
         return ResponseEntity.status(HttpStatus.CREATED).body(traineeServiceImpl.createTrainee(requestDto));
     }
 
-    @PutMapping("/update/{id}")
+    @PutMapping("/update/{traineeId}")
     public ResponseEntity<TraineeResponseDto> updateTrainee(@PathVariable Long traineeId,
-            @RequestBody TraineeRequestDto requestDto) {
+            @RequestBody TraineeRequestDto requestDto) throws ResourceNotFoundException {
         return ResponseEntity.status(HttpStatus.OK).body(traineeServiceImpl.updateTrainee(traineeId, requestDto));
     }
 
     @GetMapping("/find/{traineeId}")
-    public ResponseEntity<TraineeResponseDto> updateById(@PathVariable Long traineeId) {
+    public ResponseEntity<TraineeResponseDto> updateById(@PathVariable Long traineeId)
+            throws ResourceNotFoundException {
         return ResponseEntity.status(HttpStatus.OK).body(traineeServiceImpl.getTraineeById(traineeId));
     }
 
@@ -48,7 +50,7 @@ public class TraineeController {
     }
 
     @DeleteMapping("/delete/{traineeId}")
-    public ResponseEntity<Boolean> deleteById(@PathVariable Long traineeId) {
+    public ResponseEntity<Boolean> deleteById(@PathVariable Long traineeId) throws ResourceNotFoundException {
         return ResponseEntity.status(HttpStatus.OK).body(traineeServiceImpl.deleteTrainee(traineeId));
     }
 

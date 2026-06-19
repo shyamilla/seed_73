@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.htc.trainingmanagement.dto.request.SessionRequestDto;
 import com.htc.trainingmanagement.dto.response.SessionResponseDto;
+import com.htc.trainingmanagement.exception.ResourceNotFoundException;
 import com.htc.trainingmanagement.serviceimpl.SessionServiceImpl;
 
 import jakarta.validation.Valid;
@@ -28,18 +29,20 @@ public class SessionController {
     private final SessionServiceImpl sessionServiceImpl;
 
     @PostMapping("/add")
-    public ResponseEntity<SessionResponseDto> addSession(@Valid @RequestBody SessionRequestDto requestDto) {
+    public ResponseEntity<SessionResponseDto> addSession(@Valid @RequestBody SessionRequestDto requestDto)
+            throws ResourceNotFoundException {
         return ResponseEntity.status(HttpStatus.CREATED).body(sessionServiceImpl.createSession(requestDto));
     }
 
     @PutMapping("/update/{sessionId}")
     public ResponseEntity<SessionResponseDto> updateSession(@PathVariable Long sessionId,
-            @Valid @RequestBody SessionRequestDto requestDto) {
+            @Valid @RequestBody SessionRequestDto requestDto) throws ResourceNotFoundException {
         return ResponseEntity.status(HttpStatus.OK).body(sessionServiceImpl.updateSession(sessionId, requestDto));
     }
 
     @GetMapping("/find/{sessionId}")
-    public ResponseEntity<SessionResponseDto> findBySessionId(@PathVariable Long sessionId) {
+    public ResponseEntity<SessionResponseDto> findBySessionId(@PathVariable Long sessionId)
+            throws ResourceNotFoundException {
         return ResponseEntity.status(HttpStatus.OK).body(sessionServiceImpl.getSessionById(sessionId));
     }
 
@@ -49,7 +52,7 @@ public class SessionController {
     }
 
     @DeleteMapping("/delete/{sessionId}")
-    public ResponseEntity<Boolean> deleteById(@PathVariable Long sessionId) {
+    public ResponseEntity<Boolean> deleteById(@PathVariable Long sessionId) throws ResourceNotFoundException {
         return ResponseEntity.status(HttpStatus.OK).body(sessionServiceImpl.deleteSession(sessionId));
     }
 }

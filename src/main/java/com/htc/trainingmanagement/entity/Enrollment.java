@@ -30,6 +30,7 @@ public class Enrollment extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long enrollmentId;
+    
     private LocalDate enrollmentDate;
     @Enumerated(EnumType.STRING)
     private EnrollmentStatus completionStatus;

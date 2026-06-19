@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import com.htc.trainingmanagement.dto.request.TraineeRequestDto;
 import com.htc.trainingmanagement.dto.response.TraineeResponseDto;
 import com.htc.trainingmanagement.entity.Trainee;
+import com.htc.trainingmanagement.exception.ResourceNotFoundException;
 import com.htc.trainingmanagement.repository.TraineeRepository;
 import com.htc.trainingmanagement.service.TraineeService;
 
@@ -39,9 +40,11 @@ public class TraineeServiceImpl implements TraineeService {
     }
 
     @Override
-    public TraineeResponseDto getTraineeById(Long traineeId) {
+    public TraineeResponseDto getTraineeById(Long traineeId) throws ResourceNotFoundException {
 
-        Trainee trainee = traineeRepository.findById(traineeId).orElseThrow();
+        Trainee trainee = traineeRepository.findById(traineeId)
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        "Trainee not found with id: " + traineeId));
 
         return convertToResponseDto(trainee);
     }
@@ -61,9 +64,13 @@ public class TraineeServiceImpl implements TraineeService {
     }
 
     @Override
-    public TraineeResponseDto updateTrainee(Long traineeId, TraineeRequestDto requestDto) {
+    public TraineeResponseDto updateTrainee(
+            Long traineeId,
+            TraineeRequestDto requestDto) throws ResourceNotFoundException {
 
-        Trainee trainee = traineeRepository.findById(traineeId).orElseThrow();
+        Trainee trainee = traineeRepository.findById(traineeId)
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        "Trainee not found with id: " + traineeId));
 
         trainee.setFirstName(requestDto.getFirstName());
         trainee.setLastName(requestDto.getLastName());
@@ -80,9 +87,11 @@ public class TraineeServiceImpl implements TraineeService {
     }
 
     @Override
-    public boolean deleteTrainee(Long traineeId) {
+    public boolean deleteTrainee(Long traineeId) throws ResourceNotFoundException {
 
-        Trainee trainee = traineeRepository.findById(traineeId).orElseThrow();
+        Trainee trainee = traineeRepository.findById(traineeId)
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        "Trainee not found with id: " + traineeId));
 
         traineeRepository.delete(trainee);
 

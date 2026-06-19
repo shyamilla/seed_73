@@ -12,7 +12,6 @@ import org.springframework.stereotype.Component;
 
 import lombok.extern.slf4j.Slf4j;
 
-
 @Aspect
 @Component
 @Slf4j
@@ -20,15 +19,14 @@ import lombok.extern.slf4j.Slf4j;
 public class LoggingAspect {
 
 	@Pointcut("execution(* com.htc.trainingmanagement.controller..*(..)) "
-//        + "|| " +
-//        "execution(* com.htc.deploymentmanagement.serviceImpl..*(..))"
+	// + "|| " +
+	// "execution(* com.htc.deploymentmanagement.serviceImpl..*(..))"
 	)
 	public void applicationMethods() {
 	}
 
 	@Before("applicationMethods()")
 	public void logBefore(JoinPoint joinPoint) {
-		// log.info("Excected By Raj Obli Raj");
 		log.info("Entering Method: {}", joinPoint.getSignature().toShortString());
 
 		log.info("Arguments: {}", Arrays.toString(joinPoint.getArgs()));

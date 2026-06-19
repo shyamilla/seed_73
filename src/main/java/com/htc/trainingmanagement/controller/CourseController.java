@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.htc.trainingmanagement.dto.request.CourseRequestDto;
 import com.htc.trainingmanagement.dto.response.CourseResponseDto;
+import com.htc.trainingmanagement.exception.ResourceNotFoundException;
 import com.htc.trainingmanagement.serviceimpl.CourseServiceImpl;
 
 import jakarta.validation.Valid;
@@ -35,7 +36,7 @@ public class CourseController {
 
     @PutMapping("/update/{courseId}")
     public ResponseEntity<CourseResponseDto> updateCourse(@PathVariable Long courseId,
-            @Valid @RequestBody CourseRequestDto requestDto) {
+            @Valid @RequestBody CourseRequestDto requestDto) throws ResourceNotFoundException {
         return ResponseEntity.status(HttpStatus.OK).body(courseServiceImpl.updateCourse(courseId, requestDto));
     }
 
@@ -45,12 +46,12 @@ public class CourseController {
     }
 
     @GetMapping("/find/{courseId}")
-    public ResponseEntity<CourseResponseDto> findById(@PathVariable Long courseId) {
+    public ResponseEntity<CourseResponseDto> findById(@PathVariable Long courseId) throws ResourceNotFoundException {
         return ResponseEntity.status(HttpStatus.OK).body(courseServiceImpl.getCourseById(courseId));
     }
 
     @DeleteMapping("/delete/{courseId}")
-    public ResponseEntity<Boolean> deleteById(@PathVariable Long courseId) {
+    public ResponseEntity<Boolean> deleteById(@PathVariable Long courseId) throws ResourceNotFoundException {
         return ResponseEntity.status(HttpStatus.OK).body(courseServiceImpl.deleteCourse(courseId));
     }
 

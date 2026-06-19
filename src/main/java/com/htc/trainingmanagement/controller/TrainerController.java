@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.htc.trainingmanagement.dto.request.TrainerRequestDto;
 import com.htc.trainingmanagement.dto.response.TrainerResponseDto;
+import com.htc.trainingmanagement.exception.ResourceNotFoundException;
 import com.htc.trainingmanagement.serviceimpl.TrainerServiceImpl;
 
 import jakarta.validation.Valid;
@@ -38,12 +39,12 @@ public class TrainerController {
 
     @PutMapping("/update/{trainerId}")
     public ResponseEntity<TrainerResponseDto> updateTrainer(@PathVariable Long trainerId,
-            @Valid @RequestBody TrainerRequestDto requestDto) {
+            @Valid @RequestBody TrainerRequestDto requestDto) throws ResourceNotFoundException {
         return ResponseEntity.status(HttpStatus.OK).body(trainerServiceImpl.updateTrainer(trainerId, requestDto));
     }
 
     @GetMapping("/find/{trainerId}")
-    public ResponseEntity<TrainerResponseDto> findById(@PathVariable Long trainerId) {
+    public ResponseEntity<TrainerResponseDto> findById(@PathVariable Long trainerId) throws ResourceNotFoundException {
         return ResponseEntity.status(HttpStatus.OK).body(trainerServiceImpl.getTrainerById(trainerId));
     }
 
@@ -53,7 +54,7 @@ public class TrainerController {
     }
 
     @DeleteMapping("/delete/{trainerId}")
-    public ResponseEntity<Boolean> deleteById(@PathVariable Long trainerId) {
+    public ResponseEntity<Boolean> deleteById(@PathVariable Long trainerId) throws ResourceNotFoundException {
         return ResponseEntity.status(HttpStatus.OK).body(trainerServiceImpl.deleteTrainer(trainerId));
     }
 
