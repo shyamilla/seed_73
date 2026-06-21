@@ -4,11 +4,12 @@ import java.util.List;
 
 import com.htc.trainingmanagement.dto.request.CourseRequestDto;
 import com.htc.trainingmanagement.dto.response.CourseResponseDto;
+import com.htc.trainingmanagement.exception.DuplicateResourceException;
 import com.htc.trainingmanagement.exception.ResourceNotFoundException;
 
 public interface CourseService {
 
-    CourseResponseDto createCourse(CourseRequestDto requestDto);
+    CourseResponseDto createCourse(CourseRequestDto requestDto) throws DuplicateResourceException;
 
     CourseResponseDto getCourseById(Long courseId) throws ResourceNotFoundException;
 

@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import com.htc.trainingmanagement.dto.request.CourseRequestDto;
 import com.htc.trainingmanagement.dto.response.CourseResponseDto;
 import com.htc.trainingmanagement.entity.Course;
+import com.htc.trainingmanagement.exception.DuplicateResourceException;
 import com.htc.trainingmanagement.exception.ResourceNotFoundException;
 import com.htc.trainingmanagement.repository.CourseRepository;
 import com.htc.trainingmanagement.service.CourseService;
@@ -21,7 +22,14 @@ public class CourseServiceImpl implements CourseService {
     private final CourseRepository courseRepository;
 
     @Override
-    public CourseResponseDto createCourse(CourseRequestDto requestDto) {
+    public CourseResponseDto createCourse(CourseRequestDto requestDto)
+            throws DuplicateResourceException {
+
+        if (courseRepository.existsByCourseName(requestDto.getCourseName())) {
+            throw new DuplicateResourceException(
+                    "Course already exists with name: "
+                            + requestDto.getCourseName());
+        }
 
         Course course = new Course();
 
@@ -37,7 +45,8 @@ public class CourseServiceImpl implements CourseService {
     }
 
     @Override
-    public CourseResponseDto getCourseById(Long courseId) throws ResourceNotFoundException {
+    public CourseResponseDto getCourseById(Long courseId)
+            throws ResourceNotFoundException {
 
         Course course = courseRepository.findById(courseId)
                 .orElseThrow(() -> new ResourceNotFoundException(
@@ -61,7 +70,10 @@ public class CourseServiceImpl implements CourseService {
     }
 
     @Override
-    public CourseResponseDto updateCourse(Long courseId, CourseRequestDto requestDto) throws ResourceNotFoundException {
+    public CourseResponseDto updateCourse(
+            Long courseId,
+            CourseRequestDto requestDto)
+            throws ResourceNotFoundException {
 
         Course course = courseRepository.findById(courseId)
                 .orElseThrow(() -> new ResourceNotFoundException(
@@ -79,7 +91,8 @@ public class CourseServiceImpl implements CourseService {
     }
 
     @Override
-    public boolean deleteCourse(Long courseId) throws ResourceNotFoundException {
+    public boolean deleteCourse(Long courseId)
+            throws ResourceNotFoundException {
 
         Course course = courseRepository.findById(courseId)
                 .orElseThrow(() -> new ResourceNotFoundException(

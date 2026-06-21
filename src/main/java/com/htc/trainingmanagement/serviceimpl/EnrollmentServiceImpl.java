@@ -12,6 +12,8 @@ import com.htc.trainingmanagement.entity.Enrollment;
 import com.htc.trainingmanagement.entity.Trainee;
 import com.htc.trainingmanagement.entity.TrainingBatch;
 import com.htc.trainingmanagement.enums.EnrollmentStatus;
+import com.htc.trainingmanagement.exception.CapacityExceededException;
+import com.htc.trainingmanagement.exception.EnrollmentException;
 import com.htc.trainingmanagement.exception.ResourceNotFoundException;
 import com.htc.trainingmanagement.repository.EnrollmentRepository;
 import com.htc.trainingmanagement.repository.TraineeRepository;
@@ -24,132 +26,168 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class EnrollmentServiceImpl implements EnrollmentService {
 
-    private final EnrollmentRepository enrollmentRepository;
-    private final TraineeRepository traineeRepository;
-    private final TrainingBatchRepository trainingBatchRepository;
+        private final EnrollmentRepository enrollmentRepository;
+        private final TraineeRepository traineeRepository;
+        private final TrainingBatchRepository trainingBatchRepository;
 
-    @Override
-    public EnrollmentResponseDto createEnrollment(
-            EnrollmentRequestDto requestDto) throws ResourceNotFoundException {
+        @Override
+        public EnrollmentResponseDto createEnrollment(
+                        EnrollmentRequestDto requestDto)
+                        throws ResourceNotFoundException,
+                        EnrollmentException,
+                        CapacityExceededException {
 
-        Trainee trainee = traineeRepository.findById(
-                requestDto.getTraineeId())
-                .orElseThrow(() -> new ResourceNotFoundException(
-                        "Trainee not found with id: "
-                                + requestDto.getTraineeId()));
+                Trainee trainee = traineeRepository.findById(
+                                requestDto.getTraineeId())
+                                .orElseThrow(() -> new ResourceNotFoundException(
+                                                "Trainee not found with id: "
+                                                                + requestDto.getTraineeId()));
 
-        TrainingBatch trainingBatch = trainingBatchRepository.findById(
-                requestDto.getTrainingBatchId())
-                .orElseThrow(() -> new ResourceNotFoundException(
-                        "Training Batch not found with id: "
-                                + requestDto.getTrainingBatchId()));
+                TrainingBatch trainingBatch = trainingBatchRepository.findById(
+                                requestDto.getTrainingBatchId())
+                                .orElseThrow(() -> new ResourceNotFoundException(
+                                                "Training Batch not found with id: "
+                                                                + requestDto.getTrainingBatchId()));
 
-        Enrollment enrollment = new Enrollment();
+                // Check if trainee is already enrolled in the batch
+                if (enrollmentRepository.existsByTraineeAndTrainingBatch(
+                                trainee, trainingBatch)) {
 
-        enrollment.setTrainee(trainee);
-        enrollment.setTrainingBatch(trainingBatch);
-        enrollment.setEnrollmentDate(LocalDate.now());
-        enrollment.setCompletionStatus(EnrollmentStatus.ENROLLED);
-        enrollment.setScore(0.0);
+                        throw new EnrollmentException(
+                                        "Trainee is already enrolled in batch: "
+                                                        + trainingBatch.getBatchName());
+                }
 
-        Enrollment savedEnrollment = enrollmentRepository.save(enrollment);
+                // Check batch capacity
+                long enrolledCount = enrollmentRepository.countByTrainingBatch(trainingBatch);
 
-        return convertToResponseDto(savedEnrollment);
-    }
+                if (enrolledCount >= trainingBatch.getCapacity()) {
 
-    @Override
-    public EnrollmentResponseDto getEnrollmentById(
-            Long enrollmentId) throws ResourceNotFoundException {
+                        throw new CapacityExceededException(
+                                        "Batch capacity exceeded. Maximum capacity is "
+                                                        + trainingBatch.getCapacity());
+                }
 
-        Enrollment enrollment = enrollmentRepository.findById(
-                enrollmentId)
-                .orElseThrow(() -> new ResourceNotFoundException(
-                        "Enrollment not found with id: "
-                                + enrollmentId));
+                Enrollment enrollment = new Enrollment();
 
-        return convertToResponseDto(enrollment);
-    }
+                enrollment.setTrainee(trainee);
+                enrollment.setTrainingBatch(trainingBatch);
+                enrollment.setEnrollmentDate(LocalDate.now());
+                enrollment.setCompletionStatus(EnrollmentStatus.ENROLLED);
+                enrollment.setScore(0.0);
 
-    @Override
-    public List<EnrollmentResponseDto> getAllEnrollments() {
+                Enrollment savedEnrollment = enrollmentRepository.save(enrollment);
 
-        List<Enrollment> enrollments =
-                enrollmentRepository.findAll();
-
-        List<EnrollmentResponseDto> responseDtos =
-                new ArrayList<>();
-
-        for (Enrollment enrollment : enrollments) {
-            responseDtos.add(
-                    convertToResponseDto(enrollment));
+                return convertToResponseDto(savedEnrollment);
         }
 
-        return responseDtos;
-    }
+        @Override
+        public EnrollmentResponseDto getEnrollmentById(
+                        Long enrollmentId)
+                        throws ResourceNotFoundException {
 
-    @Override
-    public EnrollmentResponseDto updateEnrollment(
-            Long enrollmentId,
-            EnrollmentRequestDto requestDto) throws ResourceNotFoundException {
+                Enrollment enrollment = enrollmentRepository.findById(
+                                enrollmentId)
+                                .orElseThrow(() -> new ResourceNotFoundException(
+                                                "Enrollment not found with id: "
+                                                                + enrollmentId));
 
-        Enrollment enrollment = enrollmentRepository.findById(
-                enrollmentId)
-                .orElseThrow(() -> new ResourceNotFoundException(
-                        "Enrollment not found with id: "
-                                + enrollmentId));
+                return convertToResponseDto(enrollment);
+        }
 
-        Trainee trainee = traineeRepository.findById(
-                requestDto.getTraineeId())
-                .orElseThrow(() -> new ResourceNotFoundException(
-                        "Trainee not found with id: "
-                                + requestDto.getTraineeId()));
+        @Override
+        public List<EnrollmentResponseDto> getAllEnrollments() {
 
-        TrainingBatch trainingBatch = trainingBatchRepository.findById(
-                requestDto.getTrainingBatchId())
-                .orElseThrow(() -> new ResourceNotFoundException(
-                        "Training Batch not found with id: "
-                                + requestDto.getTrainingBatchId()));
+                List<Enrollment> enrollments = enrollmentRepository.findAll();
 
-        enrollment.setTrainee(trainee);
-        enrollment.setTrainingBatch(trainingBatch);
+                List<EnrollmentResponseDto> responseDtos = new ArrayList<>();
 
-        Enrollment updatedEnrollment =
-                enrollmentRepository.save(enrollment);
+                for (Enrollment enrollment : enrollments) {
+                        responseDtos.add(
+                                        convertToResponseDto(enrollment));
+                }
 
-        return convertToResponseDto(updatedEnrollment);
-    }
+                return responseDtos;
+        }
 
-    @Override
-    public boolean deleteEnrollment(
-            Long enrollmentId) throws ResourceNotFoundException {
+        @Override
+        public EnrollmentResponseDto updateEnrollment(
+                        Long enrollmentId,
+                        EnrollmentRequestDto requestDto)
+                        throws ResourceNotFoundException,
+                        EnrollmentException {
 
-        Enrollment enrollment = enrollmentRepository.findById(
-                enrollmentId)
-                .orElseThrow(() -> new ResourceNotFoundException(
-                        "Enrollment not found with id: "
-                                + enrollmentId));
+                Enrollment enrollment = enrollmentRepository.findById(
+                                enrollmentId)
+                                .orElseThrow(() -> new ResourceNotFoundException(
+                                                "Enrollment not found with id: "
+                                                                + enrollmentId));
 
-        enrollmentRepository.delete(enrollment);
+                Trainee trainee = traineeRepository.findById(
+                                requestDto.getTraineeId())
+                                .orElseThrow(() -> new ResourceNotFoundException(
+                                                "Trainee not found with id: "
+                                                                + requestDto.getTraineeId()));
 
-        return true;
-    }
+                TrainingBatch trainingBatch = trainingBatchRepository.findById(
+                                requestDto.getTrainingBatchId())
+                                .orElseThrow(() -> new ResourceNotFoundException(
+                                                "Training Batch not found with id: "
+                                                                + requestDto.getTrainingBatchId()));
 
-    private EnrollmentResponseDto convertToResponseDto(
-            Enrollment enrollment) {
+                boolean alreadyExists = enrollmentRepository.existsByTraineeAndTrainingBatch(
+                                trainee,
+                                trainingBatch);
 
-        return new EnrollmentResponseDto(
-                enrollment.getEnrollmentId(),
-                enrollment.getEnrollmentDate(),
-                enrollment.getCompletionStatus().name(),
-                enrollment.getScore(),
-                enrollment.getFeedback(),
-                enrollment.getTrainee().getTraineeId(),
-                enrollment.getTrainee().getFirstName()
-                        + " "
-                        + enrollment.getTrainee().getLastName(),
-                enrollment.getTrainingBatch().getTrainingbatchId(),
-                enrollment.getTrainingBatch().getBatchName(),
-                enrollment.getCreatedAt(),
-                enrollment.getUpdatedAt());
-    }
+                if (alreadyExists
+                                && !enrollment.getTrainee().getTraineeId().equals(
+                                                trainee.getTraineeId())) {
+
+                        throw new EnrollmentException(
+                                        "Trainee is already enrolled in batch: "
+                                                        + trainingBatch.getBatchName());
+                }
+
+                enrollment.setTrainee(trainee);
+                enrollment.setTrainingBatch(trainingBatch);
+
+                Enrollment updatedEnrollment = enrollmentRepository.save(enrollment);
+
+                return convertToResponseDto(updatedEnrollment);
+        }
+
+        @Override
+        public boolean deleteEnrollment(
+                        Long enrollmentId)
+                        throws ResourceNotFoundException {
+
+                Enrollment enrollment = enrollmentRepository.findById(
+                                enrollmentId)
+                                .orElseThrow(() -> new ResourceNotFoundException(
+                                                "Enrollment not found with id: "
+                                                                + enrollmentId));
+
+                enrollmentRepository.delete(enrollment);
+
+                return true;
+        }
+
+        private EnrollmentResponseDto convertToResponseDto(
+                        Enrollment enrollment) {
+
+                return new EnrollmentResponseDto(
+                                enrollment.getEnrollmentId(),
+                                enrollment.getEnrollmentDate(),
+                                enrollment.getCompletionStatus().name(),
+                                enrollment.getScore(),
+                                enrollment.getFeedback(),
+                                enrollment.getTrainee().getTraineeId(),
+                                enrollment.getTrainee().getFirstName()
+                                                + " "
+                                                + enrollment.getTrainee().getLastName(),
+                                enrollment.getTrainingBatch().getTrainingbatchId(),
+                                enrollment.getTrainingBatch().getBatchName(),
+                                enrollment.getCreatedAt(),
+                                enrollment.getUpdatedAt());
+        }
 }

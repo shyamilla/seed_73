@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.htc.trainingmanagement.dto.request.CourseRequestDto;
 import com.htc.trainingmanagement.dto.response.CourseResponseDto;
+import com.htc.trainingmanagement.exception.DuplicateResourceException;
 import com.htc.trainingmanagement.exception.ResourceNotFoundException;
 import com.htc.trainingmanagement.serviceimpl.CourseServiceImpl;
 
@@ -29,7 +30,8 @@ public class CourseController {
     private final CourseServiceImpl courseServiceImpl;
 
     @PostMapping("/add")
-    public ResponseEntity<CourseResponseDto> createCourse(@Valid @RequestBody CourseRequestDto reqDto) {
+    public ResponseEntity<CourseResponseDto> createCourse(@Valid @RequestBody CourseRequestDto reqDto)
+            throws DuplicateResourceException {
         CourseResponseDto responseDto = courseServiceImpl.createCourse(reqDto);
         return ResponseEntity.status(HttpStatus.CREATED).body(responseDto);
     }
