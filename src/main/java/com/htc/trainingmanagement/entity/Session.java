@@ -5,6 +5,7 @@ import java.time.LocalTime;
 
 import com.htc.trainingmanagement.enums.SessionStatus;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -31,17 +32,29 @@ public class Session extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "session_id")
     private Long sessionId;
 
+    @Column(name = "session_title")
     private String sessionTitle;
+
+    @Column(name = "session_date")
     private LocalDate sessionDate;
+
+    @Column(name = "start_time")
     private LocalTime startTime;
+
+    @Column(name = "end_time")
     private LocalTime endTime;
+
+    @Column(name = "topic")
     private String topic;
+
     @Enumerated(EnumType.STRING)
+    @Column(name = "session_status")
     private SessionStatus sessionStatus;
 
-    @ManyToOne
-    @JoinColumn(name = "training_batch_id")
+   @ManyToOne // many sessions belong to one training batch
+    @JoinColumn(name = "training_batch_id") // foreign key referencing training_batch table
     private TrainingBatch trainingBatch;
 }

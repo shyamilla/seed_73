@@ -2,6 +2,7 @@ package com.htc.trainingmanagement.entity;
 
 import com.htc.trainingmanagement.enums.CourseStatus;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -26,16 +27,22 @@ public class Course extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long courseId; 
+    @Column(name = "course_id")
+    private Long courseId;
 
-    private String courseName; 
+    @Column(name = "course_name")
+    private String courseName;
 
-    private String description; 
+    @Column(name = "description")
+    private String description;
 
-    private Integer durationInDays; 
+    @Column(name = "course_duration")
+    private Integer durationInDays;
 
-    private Integer maxCapacity; // Maximum number of trainees allowed
+    @Column(name = "capacity")
+    private Integer maxCapacity;
 
+    @Column(name = "course_status")
     @Enumerated(EnumType.STRING)
-    private CourseStatus status; 
+    private CourseStatus status;
 }

@@ -16,7 +16,7 @@ public class TrainerRequestDto {
 
     @NotBlank(message = "Trainer name is required")
     @Size(min = 3, max = 50, message = "Name must be between 3 and 50 characters")
-    private String name;
+    private String trainerName;
 
     @NotBlank(message = "Email is required")
     @Email(message = "Invalid email format")

@@ -1,5 +1,6 @@
 package com.htc.trainingmanagement.entity;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -22,12 +23,18 @@ public class Trainer extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "trainer_id")
     private Long trainerId;
 
-    private String name;
+    @Column(name = "trainer_name")
+    private String trainerName;
+    @Column(name = "trainer_email", unique = true)
     private String email;
+    @Column(name = "trainer_phone_number")
     private String phoneNumber;
+    @Column(name = "specialization")
     private String specialization;
+    @Column(name = "experience")
     private Integer yearsOfExperience;
 
 }

@@ -2,8 +2,11 @@ package com.htc.trainingmanagement.entity;
 
 import java.time.LocalDate;
 
+import org.hibernate.annotations.Collate;
+
 import com.htc.trainingmanagement.enums.TraineeStatus;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -27,16 +30,32 @@ import lombok.ToString;
 public class Trainee extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "trainee_id")
     private Long traineeId;
-    
+
+    @Column(name = "first_name")
     private String firstName;
+
+    @Column(name = "last_name")
     private String lastName;
+
+    @Column(name = "trainee_email", unique = true)
     private String email;
+
+    @Column(name = "trainee_phone_number")
     private String phoneNumber;
+
+    @Column(name = "trainee_department")
     private String department;
-    private String designation; // dev / tester/cloud
+
+    @Column(name = "designation")
+    private String designation;
+
+    @Column(name = "joining_date")
     private LocalDate joiningDate;
+
     @Enumerated(EnumType.STRING)
+    @Column(name = "trainee_status")
     private TraineeStatus status;
 
 }

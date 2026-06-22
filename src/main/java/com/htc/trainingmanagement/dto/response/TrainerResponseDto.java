@@ -11,6 +11,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class TrainerResponseDto {
     private Long trainerId;
+    
     private String name;
     private String email;
     private String phoneNumber;

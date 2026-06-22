@@ -1,6 +1,4 @@
 package com.htc.trainingmanagement.serviceimpl;
-
-import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
@@ -9,6 +7,7 @@ import com.htc.trainingmanagement.dto.request.TrainerRequestDto;
 import com.htc.trainingmanagement.dto.response.TrainerResponseDto;
 import com.htc.trainingmanagement.entity.Trainer;
 import com.htc.trainingmanagement.exception.ResourceNotFoundException;
+import com.htc.trainingmanagement.mapper.TrainerMapper;
 import com.htc.trainingmanagement.repository.TrainerRepository;
 import com.htc.trainingmanagement.service.TrainerService;
 
@@ -19,21 +18,16 @@ import lombok.RequiredArgsConstructor;
 public class TrainerServiceImpl implements TrainerService {
 
     private final TrainerRepository trainerRepository;
+    private final TrainerMapper trainerMapper;
 
     @Override
     public TrainerResponseDto createTrainer(TrainerRequestDto requestDto) {
 
-        Trainer trainer = new Trainer();
-
-        trainer.setName(requestDto.getName());
-        trainer.setEmail(requestDto.getEmail());
-        trainer.setPhoneNumber(requestDto.getPhoneNumber());
-        trainer.setSpecialization(requestDto.getSpecialization());
-        trainer.setYearsOfExperience(requestDto.getYearsOfExperience());
+        Trainer trainer = trainerMapper.toEntity(requestDto);
 
         Trainer savedTrainer = trainerRepository.save(trainer);
 
-        return convertToResponseDto(savedTrainer);
+        return trainerMapper.toResponseDto(savedTrainer);
     }
 
     @Override
@@ -43,21 +37,15 @@ public class TrainerServiceImpl implements TrainerService {
                 .orElseThrow(() -> new ResourceNotFoundException(
                         "Trainer not found with id: " + trainerId));
 
-        return convertToResponseDto(trainer);
+        return trainerMapper.toResponseDto(trainer);
     }
 
     @Override
     public List<TrainerResponseDto> getAllTrainers() {
 
-        List<Trainer> trainers = trainerRepository.findAll();
-
-        List<TrainerResponseDto> responseDtos = new ArrayList<>();
-
-        for (Trainer trainer : trainers) {
-            responseDtos.add(convertToResponseDto(trainer));
-        }
-
-        return responseDtos;
+        return trainerRepository.findAll()
+                .stream().map(trainerMapper::toResponseDto)
+                .toList();
     }
 
     @Override
@@ -69,15 +57,10 @@ public class TrainerServiceImpl implements TrainerService {
                 .orElseThrow(() -> new ResourceNotFoundException(
                         "Trainer not found with id: " + trainerId));
 
-        trainer.setName(requestDto.getName());
-        trainer.setEmail(requestDto.getEmail());
-        trainer.setPhoneNumber(requestDto.getPhoneNumber());
-        trainer.setSpecialization(requestDto.getSpecialization());
-        trainer.setYearsOfExperience(requestDto.getYearsOfExperience());
-
+        trainerMapper.updateEntity(trainer, requestDto);
         Trainer updatedTrainer = trainerRepository.save(trainer);
 
-        return convertToResponseDto(updatedTrainer);
+        return trainerMapper.toResponseDto(updatedTrainer);
     }
 
     @Override
@@ -92,17 +75,4 @@ public class TrainerServiceImpl implements TrainerService {
         return true;
     }
 
-    private TrainerResponseDto convertToResponseDto(
-            Trainer trainer) {
-
-        return new TrainerResponseDto(
-                trainer.getTrainerId(),
-                trainer.getName(),
-                trainer.getEmail(),
-                trainer.getPhoneNumber(),
-                trainer.getSpecialization(),
-                trainer.getYearsOfExperience(),
-                trainer.getCreatedAt(),
-                trainer.getUpdatedAt());
-    }
 }

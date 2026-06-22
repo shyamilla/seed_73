@@ -1,6 +1,5 @@
 package com.htc.trainingmanagement.serviceimpl;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
@@ -10,6 +9,7 @@ import com.htc.trainingmanagement.dto.response.CourseResponseDto;
 import com.htc.trainingmanagement.entity.Course;
 import com.htc.trainingmanagement.exception.DuplicateResourceException;
 import com.htc.trainingmanagement.exception.ResourceNotFoundException;
+import com.htc.trainingmanagement.mapper.CourseMapper;
 import com.htc.trainingmanagement.repository.CourseRepository;
 import com.htc.trainingmanagement.service.CourseService;
 
@@ -20,99 +20,54 @@ import lombok.RequiredArgsConstructor;
 public class CourseServiceImpl implements CourseService {
 
     private final CourseRepository courseRepository;
+    private final CourseMapper courseMapper;
 
     @Override
-    public CourseResponseDto createCourse(CourseRequestDto requestDto)
-            throws DuplicateResourceException {
-
+    public CourseResponseDto createCourse(CourseRequestDto requestDto) throws DuplicateResourceException {
         if (courseRepository.existsByCourseName(requestDto.getCourseName())) {
-            throw new DuplicateResourceException(
-                    "Course already exists with name: "
-                            + requestDto.getCourseName());
+            throw new DuplicateResourceException("Course already exists with name: "
+                    + requestDto.getCourseName());
         }
 
-        Course course = new Course();
-
-        course.setCourseName(requestDto.getCourseName());
-        course.setDescription(requestDto.getDescription());
-        course.setDurationInDays(requestDto.getDurationInDays());
-        course.setMaxCapacity(requestDto.getMaxCapacity());
-        course.setStatus(requestDto.getStatus());
-
+        Course course = courseMapper.toEntity(requestDto);
         Course savedCourse = courseRepository.save(course);
-
-        return convertToResponseDto(savedCourse);
+        return courseMapper.toResponseDto(savedCourse);
     }
 
     @Override
-    public CourseResponseDto getCourseById(Long courseId)
-            throws ResourceNotFoundException {
-
+    public CourseResponseDto getCourseById(Long courseId) throws ResourceNotFoundException {
         Course course = courseRepository.findById(courseId)
                 .orElseThrow(() -> new ResourceNotFoundException(
                         "Course not found with id: " + courseId));
-
-        return convertToResponseDto(course);
+        return courseMapper.toResponseDto(course);
     }
 
     @Override
     public List<CourseResponseDto> getAllCourses() {
-
-        List<Course> courses = courseRepository.findAll();
-
-        List<CourseResponseDto> responseDtos = new ArrayList<>();
-
-        for (Course course : courses) {
-            responseDtos.add(convertToResponseDto(course));
-        }
-
-        return responseDtos;
+        return courseRepository.findAll()
+                .stream()
+                .map(courseMapper::toResponseDto)
+                .toList();
     }
 
     @Override
-    public CourseResponseDto updateCourse(
-            Long courseId,
-            CourseRequestDto requestDto)
-            throws ResourceNotFoundException {
+    public CourseResponseDto updateCourse(Long courseId, CourseRequestDto requestDto) throws ResourceNotFoundException {
 
         Course course = courseRepository.findById(courseId)
                 .orElseThrow(() -> new ResourceNotFoundException(
                         "Course not found with id: " + courseId));
 
-        course.setCourseName(requestDto.getCourseName());
-        course.setDescription(requestDto.getDescription());
-        course.setDurationInDays(requestDto.getDurationInDays());
-        course.setMaxCapacity(requestDto.getMaxCapacity());
-        course.setStatus(requestDto.getStatus());
-
+        courseMapper.updateEntity(course, requestDto);
         Course updatedCourse = courseRepository.save(course);
-
-        return convertToResponseDto(updatedCourse);
+        return courseMapper.toResponseDto(updatedCourse);
     }
 
     @Override
-    public boolean deleteCourse(Long courseId)
-            throws ResourceNotFoundException {
-
+    public boolean deleteCourse(Long courseId) throws ResourceNotFoundException {
         Course course = courseRepository.findById(courseId)
                 .orElseThrow(() -> new ResourceNotFoundException(
                         "Course not found with id: " + courseId));
-
         courseRepository.delete(course);
-
         return true;
-    }
-
-    private CourseResponseDto convertToResponseDto(Course course) {
-
-        return new CourseResponseDto(
-                course.getCourseId(),
-                course.getCourseName(),
-                course.getDescription(),
-                course.getDurationInDays(),
-                course.getMaxCapacity(),
-                course.getStatus(),
-                course.getCreatedAt(),
-                course.getUpdatedAt());
     }
 }

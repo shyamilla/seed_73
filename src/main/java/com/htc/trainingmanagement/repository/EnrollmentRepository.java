@@ -8,10 +8,7 @@ import com.htc.trainingmanagement.entity.TrainingBatch;
 
 public interface EnrollmentRepository extends JpaRepository<Enrollment, Long> {
 
-    boolean existsByTraineeAndTrainingBatch(
-            Trainee trainee,
-            TrainingBatch trainingBatch);
+        boolean existsByTraineeAndTrainingBatch(Trainee trainee, TrainingBatch trainingBatch);
 
-    long countByTrainingBatch(
-            TrainingBatch trainingBatch);
+        long countByTrainingBatch(TrainingBatch trainingBatch);
 }

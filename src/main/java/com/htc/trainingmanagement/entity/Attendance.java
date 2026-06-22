@@ -4,6 +4,7 @@ import java.time.LocalDate;
 
 import com.htc.trainingmanagement.enums.AttendanceStatus;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -30,17 +31,24 @@ public class Attendance extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "attendance_id")
     private Long attendanceId;
 
+    @Column(name = "attendance_date")
     private LocalDate attendanceDate;
+
     @Enumerated(EnumType.STRING)
+    @Column(name = "attendance_status")
     private AttendanceStatus attendanceStatus;
+
+    @Column(name = "remarks")
     private String remarks;
-    @ManyToOne
-    @JoinColumn(name = "trainee_id")
+
+    @ManyToOne // many attendance records belong to one trainee
+    @JoinColumn(name = "trainee_id") // foreign key referencing trainee table
     private Trainee trainee;
 
-    @ManyToOne
-    @JoinColumn(name = "session_id")
+    @ManyToOne // many attendance records belong to one session
+    @JoinColumn(name = "session_id") // foreign key referencing session table
     private Session session;
 }

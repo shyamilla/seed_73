@@ -4,6 +4,7 @@ import java.time.LocalDate;
 
 import com.htc.trainingmanagement.enums.EnrollmentStatus;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -29,18 +30,27 @@ import lombok.ToString;
 public class Enrollment extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "enrollment_id")
     private Long enrollmentId;
-    
+
+    @Column(name = "enrollment_date")
     private LocalDate enrollmentDate;
+
     @Enumerated(EnumType.STRING)
+    @Column(name = "completion_status")
     private EnrollmentStatus completionStatus;
+
+    @Column(name = "score")
     private Double score;
+
+    @Column(name = "feedback")
     private String feedback;
-    @ManyToOne
-    @JoinColumn(name = "trainee_id")
+
+    @ManyToOne // many enrollments belong to one trainee
+    @JoinColumn(name = "trainee_id") // foreign key referencing trainee table
     private Trainee trainee;
 
-    @ManyToOne
-    @JoinColumn(name = "training_batch_id")
+    @ManyToOne // many enrollments belong to one training batch
+    @JoinColumn(name = "training_batch_id") // foreign key referencing training_batch table
     private TrainingBatch trainingBatch;
 }
