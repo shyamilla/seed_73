@@ -36,34 +36,27 @@ public class EnrollmentServiceImpl implements EnrollmentService {
                         EnrollmentException,
                         CapacityExceededException {
 
-                Trainee trainee = traineeRepository.findById(
-                                requestDto.getTraineeId())
+                Trainee trainee = traineeRepository.findById(requestDto.getTraineeId())
                                 .orElseThrow(() -> new ResourceNotFoundException(
-                                                "Trainee not found with id: "
-                                                                + requestDto.getTraineeId()));
+                                                "Trainee not found with id: " + requestDto.getTraineeId()));
 
-                TrainingBatch trainingBatch = trainingBatchRepository.findById(
-                                requestDto.getTrainingBatchId())
+                TrainingBatch trainingBatch = trainingBatchRepository.findById(requestDto.getTrainingBatchId())
                                 .orElseThrow(() -> new ResourceNotFoundException(
                                                 "Training Batch not found with id: "
                                                                 + requestDto.getTrainingBatchId()));
 
-                if (enrollmentRepository.existsByTraineeAndTrainingBatch(
-                                trainee, trainingBatch)) {
-
+                // duplicate check
+                if (enrollmentRepository.existsByTraineeAndTrainingBatch(trainee, trainingBatch)) {
                         throw new EnrollmentException(
-                                        "Trainee is already enrolled in batch: "
-                                                        + trainingBatch.getBatchName());
+                                        "Trainee is already enrolled in batch: " + trainingBatch.getBatchName());
                 }
 
-                long enrolledCount = enrollmentRepository
-                                .countByTrainingBatch(trainingBatch);
+                // capacity check
+                long enrolledCount = enrollmentRepository.countByTrainingBatch(trainingBatch);
 
                 if (enrolledCount >= trainingBatch.getCapacity()) {
-
                         throw new CapacityExceededException(
-                                        "Batch capacity exceeded. Maximum capacity is "
-                                                        + trainingBatch.getCapacity());
+                                        "Batch capacity exceeded. Maximum capacity is " + trainingBatch.getCapacity());
                 }
 
                 Enrollment enrollment = enrollmentMapper.toEntity(
@@ -71,23 +64,25 @@ public class EnrollmentServiceImpl implements EnrollmentService {
                                 trainee,
                                 trainingBatch);
 
-                Enrollment savedEnrollment = enrollmentRepository
-                                .save(enrollment);
+                Enrollment savedEnrollment = enrollmentRepository.save(enrollment);
 
                 return enrollmentMapper.toResponseDto(savedEnrollment);
         }
 
         @Override
-        public EnrollmentResponseDto getEnrollmentById(Long enrollmentId) throws ResourceNotFoundException {
-                Enrollment enrollment = enrollmentRepository.findById(
-                                enrollmentId).orElseThrow(
-                                                () -> new ResourceNotFoundException(
-                                                                "Enrollment not found with id: " + enrollmentId));
+        public EnrollmentResponseDto getEnrollmentById(Long enrollmentId)
+                        throws ResourceNotFoundException {
+
+                Enrollment enrollment = enrollmentRepository.findById(enrollmentId)
+                                .orElseThrow(() -> new ResourceNotFoundException(
+                                                "Enrollment not found with id: " + enrollmentId));
+
                 return enrollmentMapper.toResponseDto(enrollment);
         }
 
         @Override
         public List<EnrollmentResponseDto> getAllEnrollments() {
+
                 return enrollmentRepository.findAll()
                                 .stream()
                                 .map(enrollmentMapper::toResponseDto)
@@ -96,7 +91,7 @@ public class EnrollmentServiceImpl implements EnrollmentService {
 
         @Override
         public EnrollmentResponseDto updateEnrollment(Long enrollmentId, EnrollmentRequestDto requestDto)
-                        throws ResourceNotFoundException, EnrollmentException {
+                        throws ResourceNotFoundException, EnrollmentException, CapacityExceededException {
 
                 Enrollment enrollment = enrollmentRepository.findById(enrollmentId)
                                 .orElseThrow(() -> new ResourceNotFoundException(
@@ -106,35 +101,49 @@ public class EnrollmentServiceImpl implements EnrollmentService {
                                 .orElseThrow(() -> new ResourceNotFoundException(
                                                 "Trainee not found with id: " + requestDto.getTraineeId()));
 
-                TrainingBatch trainingBatch = trainingBatchRepository.findById(
-                                requestDto.getTrainingBatchId()).orElseThrow(
-                                                () -> new ResourceNotFoundException(
-                                                                "Training Batch not found with id: "
-                                                                                + requestDto.getTrainingBatchId()));
+                TrainingBatch trainingBatch = trainingBatchRepository.findById(requestDto.getTrainingBatchId())
+                                .orElseThrow(() -> new ResourceNotFoundException(
+                                                "Training Batch not found with id: "
+                                                                + requestDto.getTrainingBatchId()));
 
-                boolean alreadyExists = enrollmentRepository
-                                .existsByTraineeAndTrainingBatch(trainee, trainingBatch);
+                // duplicate safe check
+                boolean exists = enrollmentRepository.existsByTraineeAndTrainingBatch(trainee, trainingBatch);
 
-                if (alreadyExists
-                                && !enrollment.getTrainee().getTraineeId().equals(trainee.getTraineeId())) {
+                boolean isSameRecord = enrollment.getTrainee().getTraineeId().equals(trainee.getTraineeId())
+                                && enrollment.getTrainingBatch().getTrainingbatchId()
+                                                .equals(trainingBatch.getTrainingbatchId());
 
+                if (exists && !isSameRecord) {
                         throw new EnrollmentException(
                                         "Trainee is already enrolled in batch: " + trainingBatch.getBatchName());
                 }
-                enrollmentMapper.updateEntity(enrollment, trainee, trainingBatch);
+
+                // capacity check for update
+                long enrolledCount = enrollmentRepository.countByTrainingBatch(trainingBatch);
+
+                if (enrolledCount >= trainingBatch.getCapacity()) {
+                        throw new CapacityExceededException(
+                                        "Batch capacity exceeded. Maximum capacity is " + trainingBatch.getCapacity());
+                }
+
+                enrollment.setTrainee(trainee);
+                enrollment.setTrainingBatch(trainingBatch);
+
                 Enrollment updatedEnrollment = enrollmentRepository.save(enrollment);
+
                 return enrollmentMapper.toResponseDto(updatedEnrollment);
         }
 
         @Override
-        public boolean deleteEnrollment(Long enrollmentId) throws ResourceNotFoundException {
+        public boolean deleteEnrollment(Long enrollmentId)
+                        throws ResourceNotFoundException {
 
-                Enrollment enrollment = enrollmentRepository.findById(
-                                enrollmentId)
+                Enrollment enrollment = enrollmentRepository.findById(enrollmentId)
                                 .orElseThrow(() -> new ResourceNotFoundException(
-                                                "Enrollment not found with id: "
-                                                                + enrollmentId));
+                                                "Enrollment not found with id: " + enrollmentId));
+
                 enrollmentRepository.delete(enrollment);
+
                 return true;
         }
 }

@@ -15,7 +15,15 @@ public interface CourseService {
 
     List<CourseResponseDto> getAllCourses();
 
-    CourseResponseDto updateCourse(Long courseId,CourseRequestDto requestDto) throws ResourceNotFoundException;
+    CourseResponseDto updateCourse(Long courseId, CourseRequestDto requestDto) throws ResourceNotFoundException;
 
     boolean deleteCourse(Long courseId) throws ResourceNotFoundException;
+
+    //
+    List<CourseResponseDto> searchCoursesByName(String courseName);
+
+    CourseResponseDto updateCourseDuration(
+            Long courseId,
+            Integer duration)
+            throws ResourceNotFoundException;
 }

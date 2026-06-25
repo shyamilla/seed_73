@@ -16,7 +16,7 @@ public interface EnrollmentService {
 
     List<EnrollmentResponseDto> getAllEnrollments();
 
-    EnrollmentResponseDto updateEnrollment(Long enrollmentId, EnrollmentRequestDto requestDto) throws ResourceNotFoundException, EnrollmentException;
+    EnrollmentResponseDto updateEnrollment(Long enrollmentId, EnrollmentRequestDto requestDto) throws ResourceNotFoundException, EnrollmentException, CapacityExceededException;
 
     boolean deleteEnrollment(Long enrollmentId) throws ResourceNotFoundException;
 

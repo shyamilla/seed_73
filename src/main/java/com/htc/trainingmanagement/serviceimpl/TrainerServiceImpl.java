@@ -1,4 +1,5 @@
 package com.htc.trainingmanagement.serviceimpl;
+
 import java.util.List;
 
 import org.springframework.stereotype.Service;
@@ -6,9 +7,11 @@ import org.springframework.stereotype.Service;
 import com.htc.trainingmanagement.dto.request.TrainerRequestDto;
 import com.htc.trainingmanagement.dto.response.TrainerResponseDto;
 import com.htc.trainingmanagement.entity.Trainer;
+import com.htc.trainingmanagement.entity.User;
 import com.htc.trainingmanagement.exception.ResourceNotFoundException;
 import com.htc.trainingmanagement.mapper.TrainerMapper;
 import com.htc.trainingmanagement.repository.TrainerRepository;
+import com.htc.trainingmanagement.repository.UserRepository;
 import com.htc.trainingmanagement.service.TrainerService;
 
 import lombok.RequiredArgsConstructor;
@@ -19,16 +22,21 @@ public class TrainerServiceImpl implements TrainerService {
 
     private final TrainerRepository trainerRepository;
     private final TrainerMapper trainerMapper;
+    // private final UserRepository userRepository;
 
-    @Override
-    public TrainerResponseDto createTrainer(TrainerRequestDto requestDto) {
+    // @Override
+    // public TrainerResponseDto createTrainer(TrainerRequestDto requestDto) throws ResourceNotFoundException {
 
-        Trainer trainer = trainerMapper.toEntity(requestDto);
+    //     User user = userRepository.findById(requestDto.getUserId())
+    //             .orElseThrow(() -> new ResourceNotFoundException(
+    //                     "User not found with id: " + requestDto.getUserId()));
 
-        Trainer savedTrainer = trainerRepository.save(trainer);
+    //     Trainer trainer = trainerMapper.toEntity(requestDto, user);
 
-        return trainerMapper.toResponseDto(savedTrainer);
-    }
+    //     Trainer savedTrainer = trainerRepository.save(trainer);
+
+    //     return trainerMapper.toResponseDto(savedTrainer);
+    // }
 
     @Override
     public TrainerResponseDto getTrainerById(Long trainerId) throws ResourceNotFoundException {
@@ -44,20 +52,20 @@ public class TrainerServiceImpl implements TrainerService {
     public List<TrainerResponseDto> getAllTrainers() {
 
         return trainerRepository.findAll()
-                .stream().map(trainerMapper::toResponseDto)
+                .stream()
+                .map(trainerMapper::toResponseDto)
                 .toList();
     }
 
     @Override
-    public TrainerResponseDto updateTrainer(
-            Long trainerId,
-            TrainerRequestDto requestDto) throws ResourceNotFoundException {
+    public TrainerResponseDto updateTrainer(Long trainerId, TrainerRequestDto requestDto) throws ResourceNotFoundException {
 
         Trainer trainer = trainerRepository.findById(trainerId)
                 .orElseThrow(() -> new ResourceNotFoundException(
                         "Trainer not found with id: " + trainerId));
 
         trainerMapper.updateEntity(trainer, requestDto);
+
         Trainer updatedTrainer = trainerRepository.save(trainer);
 
         return trainerMapper.toResponseDto(updatedTrainer);
@@ -74,5 +82,4 @@ public class TrainerServiceImpl implements TrainerService {
 
         return true;
     }
-
 }

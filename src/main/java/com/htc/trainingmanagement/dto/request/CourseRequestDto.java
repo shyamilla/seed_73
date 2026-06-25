@@ -15,7 +15,7 @@ import lombok.Data;
 public class CourseRequestDto {
 
     @NotBlank(message = "Trainer name is required")
-    @Size(min = 3, max = 50, message = "Name must be between 3 and 50 characters")
+    @Size(min = 3, max = 30, message = "Name must be between 3 and 50 characters")
     private String courseName;
     @NotBlank(message = "Description must not be empty")
     private String description;

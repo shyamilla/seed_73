@@ -27,10 +27,10 @@ public class TraineeController {
 
     private final TraineeServiceImpl traineeServiceImpl;
 
-    @PostMapping("/add")
-    public ResponseEntity<TraineeResponseDto> createTrainee(@RequestBody TraineeRequestDto requestDto) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(traineeServiceImpl.createTrainee(requestDto));
-    }
+    // @PostMapping("/add")
+    // public ResponseEntity<TraineeResponseDto> createTrainee(@RequestBody TraineeRequestDto requestDto) throws ResourceNotFoundException {
+    //     return ResponseEntity.status(HttpStatus.CREATED).body(traineeServiceImpl.createTrainee(requestDto));
+    // }
 
     @PutMapping("/update/{traineeId}")
     public ResponseEntity<TraineeResponseDto> updateTrainee(@PathVariable Long traineeId,

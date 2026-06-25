@@ -5,6 +5,8 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -26,15 +28,19 @@ public class Trainer extends BaseEntity {
     @Column(name = "trainer_id")
     private Long trainerId;
 
-    @Column(name = "trainer_name")
-    private String trainerName;
-    @Column(name = "trainer_email", unique = true)
-    private String email;
-    @Column(name = "trainer_phone_number")
+    // @Column(name = "trainer_name")
+    // private String trainerName;
+    // @Column(name = "trainer_email", unique = true)
+    // private String email;
+    @Column(name = "phone_number")
     private String phoneNumber;
     @Column(name = "specialization")
     private String specialization;
     @Column(name = "experience")
     private Integer yearsOfExperience;
+
+    @OneToOne
+    @JoinColumn(name = "user_id", nullable = false, unique = true)
+    private User user;
 
 }

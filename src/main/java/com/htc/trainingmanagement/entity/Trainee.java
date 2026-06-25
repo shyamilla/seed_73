@@ -2,8 +2,6 @@ package com.htc.trainingmanagement.entity;
 
 import java.time.LocalDate;
 
-import org.hibernate.annotations.Collate;
-
 import com.htc.trainingmanagement.enums.TraineeStatus;
 
 import jakarta.persistence.Column;
@@ -13,6 +11,8 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -33,14 +33,14 @@ public class Trainee extends BaseEntity {
     @Column(name = "trainee_id")
     private Long traineeId;
 
-    @Column(name = "first_name")
-    private String firstName;
+    // @Column(name = "first_name")
+    // private String firstName;
 
-    @Column(name = "last_name")
-    private String lastName;
+    // @Column(name = "last_name")
+    // private String lastName;
 
-    @Column(name = "trainee_email", unique = true)
-    private String email;
+    // @Column(name = "trainee_email", unique = true)
+    // private String email;
 
     @Column(name = "trainee_phone_number")
     private String phoneNumber;
@@ -58,4 +58,7 @@ public class Trainee extends BaseEntity {
     @Column(name = "trainee_status")
     private TraineeStatus status;
 
+    @OneToOne
+    @JoinColumn(name = "user_id", nullable = false, unique = true)
+    private User user;
 }

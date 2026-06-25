@@ -7,9 +7,14 @@ import org.springframework.stereotype.Service;
 import com.htc.trainingmanagement.dto.request.AttendanceRequestDto;
 import com.htc.trainingmanagement.dto.response.AttendanceResponseDto;
 import com.htc.trainingmanagement.entity.Attendance;
+import com.htc.trainingmanagement.entity.Session;
+import com.htc.trainingmanagement.entity.Trainee;
+import com.htc.trainingmanagement.enums.AttendanceStatus;
 import com.htc.trainingmanagement.exception.ResourceNotFoundException;
 import com.htc.trainingmanagement.mapper.AttendanceMapper;
 import com.htc.trainingmanagement.repository.AttendanceRepository;
+import com.htc.trainingmanagement.repository.SessionRepository;
+import com.htc.trainingmanagement.repository.TraineeRepository;
 import com.htc.trainingmanagement.service.AttendanceService;
 
 import lombok.RequiredArgsConstructor;
@@ -18,69 +23,122 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class AttendanceServiceImpl implements AttendanceService {
 
-    private final AttendanceRepository attendanceRepository;
-    private final AttendanceMapper attendanceMapper;
+        private final AttendanceRepository attendanceRepository;
+        private final AttendanceMapper attendanceMapper;
+        private final TraineeRepository traineeRepository;
+        private final SessionRepository sessionRepository;
 
-    @Override
-    public AttendanceResponseDto createAttendance(
-            AttendanceRequestDto requestDto)
-            throws ResourceNotFoundException {
+        @Override
+        public AttendanceResponseDto createAttendance(AttendanceRequestDto requestDto)
+                        throws ResourceNotFoundException {
 
-        Attendance attendance = attendanceMapper.toEntity(requestDto);
+                Trainee trainee = traineeRepository.findById(requestDto.getTraineeId())
+                                .orElseThrow(() -> new ResourceNotFoundException(
+                                                "Trainee not found with id: " + requestDto.getTraineeId()));
 
-        Attendance savedAttendance = attendanceRepository.save(attendance);
+                Session session = sessionRepository.findById(requestDto.getSessionId())
+                                .orElseThrow(() -> new ResourceNotFoundException(
+                                                "Session not found with id: " + requestDto.getSessionId()));
 
-        return attendanceMapper.toResponseDto(savedAttendance);
-    }
+                Attendance attendance = attendanceMapper.toEntity(requestDto);
 
-    @Override
-    public AttendanceResponseDto getAttendanceById(
-            Long attendanceId)
-            throws ResourceNotFoundException {
+                attendance.setTrainee(trainee);
+                attendance.setSession(session);
 
-        Attendance attendance = attendanceRepository.findById(attendanceId)
-                .orElseThrow(() -> new ResourceNotFoundException(
-                        "Attendance not found with id: " + attendanceId));
+                Attendance savedAttendance = attendanceRepository.save(attendance);
 
-        return attendanceMapper.toResponseDto(attendance);
-    }
+                return attendanceMapper.toResponseDto(savedAttendance);
+        }
 
-    @Override
-    public List<AttendanceResponseDto> getAllAttendances() {
+        @Override
+        public AttendanceResponseDto getAttendanceById(Long attendanceId)
+                        throws ResourceNotFoundException {
 
-        return attendanceRepository.findAll()
-                .stream()
-                .map(attendanceMapper::toResponseDto)
-                .toList();
-    }
+                Attendance attendance = attendanceRepository.findById(attendanceId)
+                                .orElseThrow(() -> new ResourceNotFoundException(
+                                                "Attendance not found with id: " + attendanceId));
 
-    @Override
-    public AttendanceResponseDto updateAttendance(
-            Long attendanceId,
-            AttendanceRequestDto requestDto)
-            throws ResourceNotFoundException {
+                return attendanceMapper.toResponseDto(attendance);
+        }
 
-        Attendance attendance = attendanceRepository.findById(attendanceId)
-                .orElseThrow(() -> new ResourceNotFoundException(
-                        "Attendance not found with id: " + attendanceId));
+        @Override
+        public List<AttendanceResponseDto> getAllAttendances() {
 
-        attendanceMapper.updateEntity(attendance, requestDto);
+                return attendanceRepository.findAll()
+                                .stream()
+                                .map(attendanceMapper::toResponseDto)
+                                .toList();
+        }
 
-        Attendance updatedAttendance = attendanceRepository.save(attendance);
+        @Override
+        public AttendanceResponseDto updateAttendance(Long attendanceId, AttendanceRequestDto requestDto)
+                        throws ResourceNotFoundException {
 
-        return attendanceMapper.toResponseDto(updatedAttendance);
-    }
+                Attendance attendance = attendanceRepository.findById(attendanceId)
+                                .orElseThrow(() -> new ResourceNotFoundException(
+                                                "Attendance not found with id: " + attendanceId));
 
-    @Override
-    public boolean deleteAttendance(Long attendanceId)
-            throws ResourceNotFoundException {
+                Trainee trainee = traineeRepository.findById(requestDto.getTraineeId())
+                                .orElseThrow(() -> new ResourceNotFoundException(
+                                                "Trainee not found with id: " + requestDto.getTraineeId()));
 
-        Attendance attendance = attendanceRepository.findById(attendanceId)
-                .orElseThrow(() -> new ResourceNotFoundException(
-                        "Attendance not found with id: " + attendanceId));
+                Session session = sessionRepository.findById(requestDto.getSessionId())
+                                .orElseThrow(() -> new ResourceNotFoundException(
+                                                "Session not found with id: " + requestDto.getSessionId()));
 
-        attendanceRepository.delete(attendance);
+                attendanceMapper.updateEntity(attendance, requestDto);
 
-        return true;
-    }
+                attendance.setTrainee(trainee);
+                attendance.setSession(session);
+
+                Attendance updatedAttendance = attendanceRepository.save(attendance);
+
+                return attendanceMapper.toResponseDto(updatedAttendance);
+        }
+
+        @Override
+        public boolean deleteAttendance(Long attendanceId)
+                        throws ResourceNotFoundException {
+
+                Attendance attendance = attendanceRepository.findById(attendanceId)
+                                .orElseThrow(() -> new ResourceNotFoundException(
+                                                "Attendance not found with id: " + attendanceId));
+
+                attendanceRepository.delete(attendance);
+
+                return true;
+        }
+
+        // extra methods apart from crud
+
+        @Override
+        public List<AttendanceResponseDto> getAttendanceByTrainee(Long traineeId)
+                        throws ResourceNotFoundException {
+
+                traineeRepository.findById(traineeId)
+                                .orElseThrow(() -> new ResourceNotFoundException(
+                                                "Trainee not found with id: " + traineeId));
+
+                return attendanceRepository.findByTraineeTraineeId(traineeId)
+                                .stream()
+                                .map(attendanceMapper::toResponseDto)
+                                .toList();
+        }
+
+        @Override
+        public AttendanceResponseDto updateAttendanceStatus(
+                        Long attendanceId,
+                        AttendanceStatus status)
+                        throws ResourceNotFoundException {
+
+                Attendance attendance = attendanceRepository.findById(attendanceId)
+                                .orElseThrow(() -> new ResourceNotFoundException(
+                                                "Attendance not found with id: " + attendanceId));
+
+                attendance.setAttendanceStatus(status);
+
+                Attendance updatedAttendance = attendanceRepository.save(attendance);
+
+                return attendanceMapper.toResponseDto(updatedAttendance);
+        }
 }

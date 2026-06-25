@@ -11,8 +11,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class TrainerResponseDto {
     private Long trainerId;
-    
-    private String name;
+    private Long userId;
+    private String userName;
     private String email;
     private String phoneNumber;
     private String specialization;
@@ -20,5 +20,5 @@ public class TrainerResponseDto {
 
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
-  
+
 }

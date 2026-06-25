@@ -53,10 +53,10 @@ public class TrainingBatch extends BaseEntity {
     private BatchStatus status;
 
     @ManyToOne // many batches belong to one course
-    @JoinColumn(name = "course_id") // foreign key referencing Course table
+    @JoinColumn(name = "course_id") // foreign key refers to  Course table
     private Course course;
 
     @ManyToOne // many batches belong to one trainer
-    @JoinColumn(name = "trainer_id") // foreign key referencing Trainer table
+    @JoinColumn(name = "trainer_id") // foreign key refers to Trainer table
     private Trainer trainer;
 }

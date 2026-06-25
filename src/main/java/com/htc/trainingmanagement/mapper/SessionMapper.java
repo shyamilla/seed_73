@@ -44,8 +44,7 @@ public class SessionMapper {
 
     public void updateEntity(
             Session session,
-            SessionRequestDto requestDto,
-            TrainingBatch trainingBatch) {
+            SessionRequestDto requestDto) {
 
         session.setSessionTitle(requestDto.getSessionTitle());
         session.setSessionDate(requestDto.getSessionDate());
@@ -53,6 +52,5 @@ public class SessionMapper {
         session.setEndTime(requestDto.getEndTime());
         session.setTopic(requestDto.getTopic());
         session.setSessionStatus(requestDto.getSessionStatus());
-        session.setTrainingBatch(trainingBatch);
     }
 }

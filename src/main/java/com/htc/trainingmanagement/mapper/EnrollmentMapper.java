@@ -49,9 +49,7 @@ public class EnrollmentMapper {
                 enrollment.getScore(),
                 enrollment.getFeedback(),
                 enrollment.getTrainee().getTraineeId(),
-                enrollment.getTrainee().getFirstName()
-                        + " "
-                        + enrollment.getTrainee().getLastName(),
+                enrollment.getTrainee().getUser().getUserName(),
                 enrollment.getTrainingBatch().getTrainingbatchId(),
                 enrollment.getTrainingBatch().getBatchName(),
                 enrollment.getCreatedAt(),

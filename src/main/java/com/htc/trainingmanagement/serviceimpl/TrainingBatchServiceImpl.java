@@ -1,6 +1,5 @@
 package com.htc.trainingmanagement.serviceimpl;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
@@ -23,69 +22,86 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class TrainingBatchServiceImpl implements TrainingBatchService {
 
-        private final TrainingBatchRepository trainingBatchRepository;
-        private final CourseRepository courseRepository;
-        private final TrainerRepository trainerRepository;
-        private final TrainingBatchMapper trainingBatchMapper;
+    private final TrainingBatchRepository trainingBatchRepository;
+    private final TrainingBatchMapper trainingBatchMapper;
+    private final CourseRepository courseRepository;
+    private final TrainerRepository trainerRepository;
 
-        @Override
-        public TrainingBatchResponseDto createTrainingBatch(
-                        TrainingBatchRequestDto requestDto) throws ResourceNotFoundException {
+    @Override
+    public TrainingBatchResponseDto createTrainingBatch(
+            TrainingBatchRequestDto requestDto) throws ResourceNotFoundException {
 
-                TrainingBatch trainingBatch = trainingBatchMapper.toEntity(requestDto);
-                TrainingBatch saveBatch = trainingBatchRepository.save(trainingBatch);
-                return trainingBatchMapper.toResponseDto(saveBatch);
-        }
+        Course course = courseRepository.findById(requestDto.getCourseId())
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        "Course not found with id: " + requestDto.getCourseId()));
 
-        @Override
-        public TrainingBatchResponseDto getTrainingBatchById(
-                        Long trainingBatchId) throws ResourceNotFoundException {
+        Trainer trainer = trainerRepository.findById(requestDto.getTrainerId())
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        "Trainer not found with id: " + requestDto.getTrainerId()));
 
-                TrainingBatch batch = trainingBatchRepository.findById(
-                                trainingBatchId)
-                                .orElseThrow(() -> new ResourceNotFoundException(
-                                                "Training Batch not found with id: "
-                                                                + trainingBatchId));
+        TrainingBatch trainingBatch = trainingBatchMapper.toEntity(
+                requestDto, course, trainer);
 
-                return trainingBatchMapper.toResponseDto(batch);
-        }
+        TrainingBatch savedBatch = trainingBatchRepository.save(trainingBatch);
 
-        @Override
-        public List<TrainingBatchResponseDto> getAllTrainingBatch() {
+        return trainingBatchMapper.toResponseDto(savedBatch);
+    }
 
-                return trainingBatchRepository.findAll().stream()
-                                .map(trainingBatchMapper::toResponseDto)
-                                .toList();
-        }
+    @Override
+    public TrainingBatchResponseDto getTrainingBatchById(Long trainingBatchId) throws ResourceNotFoundException {
 
-        @Override
-        public TrainingBatchResponseDto updateTrainingBatch(
-                        Long trainingBatchId,
-                        TrainingBatchRequestDto requestDto) throws ResourceNotFoundException {
+        TrainingBatch batch = trainingBatchRepository.findById(trainingBatchId)
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        "Training Batch not found with id: " + trainingBatchId));
 
-                TrainingBatch trainingBatch = trainingBatchRepository.findById(trainingBatchId)
-                                .orElseThrow(() -> new ResourceNotFoundException(
-                                                "Training Batch not found with id: "
-                                                                + trainingBatchId));
+        return trainingBatchMapper.toResponseDto(batch);
+    }
 
-                trainingBatchMapper.updateEntity(trainingBatch, requestDto);
-                TrainingBatch updatedBatch = trainingBatchRepository.save(trainingBatch);
+    @Override
+    public List<TrainingBatchResponseDto> getAllTrainingBatch() {
 
-                return trainingBatchMapper.toResponseDto(updatedBatch);
-        }
+        return trainingBatchRepository.findAll()
+                .stream()
+                .map(trainingBatchMapper::toResponseDto)
+                .toList();
+    }
 
-        @Override
-        public boolean deleteTrainingBatch(Long trainingBatchId) throws ResourceNotFoundException {
+    @Override
+    public TrainingBatchResponseDto updateTrainingBatch(
+            Long trainingBatchId,
+            TrainingBatchRequestDto requestDto) throws ResourceNotFoundException {
 
-                TrainingBatch batch = trainingBatchRepository.findById(
-                                trainingBatchId)
-                                .orElseThrow(() -> new ResourceNotFoundException(
-                                                "Training Batch not found with id: "
-                                                                + trainingBatchId));
+        TrainingBatch trainingBatch = trainingBatchRepository.findById(trainingBatchId)
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        "Training Batch not found with id: " + trainingBatchId));
 
-                trainingBatchRepository.delete(batch);
+        Course course = courseRepository.findById(requestDto.getCourseId())
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        "Course not found with id: " + requestDto.getCourseId()));
 
-                return true;
-        }
+        Trainer trainer = trainerRepository.findById(requestDto.getTrainerId())
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        "Trainer not found with id: " + requestDto.getTrainerId()));
 
+        trainingBatchMapper.updateEntity(trainingBatch, requestDto);
+
+        trainingBatch.setCourse(course);
+        trainingBatch.setTrainer(trainer);
+
+        TrainingBatch updatedBatch = trainingBatchRepository.save(trainingBatch);
+
+        return trainingBatchMapper.toResponseDto(updatedBatch);
+    }
+
+    @Override
+    public boolean deleteTrainingBatch(Long trainingBatchId) throws ResourceNotFoundException {
+
+        TrainingBatch batch = trainingBatchRepository.findById(trainingBatchId)
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        "Training Batch not found with id: " + trainingBatchId));
+
+        trainingBatchRepository.delete(batch);
+
+        return true;
+    }
 }

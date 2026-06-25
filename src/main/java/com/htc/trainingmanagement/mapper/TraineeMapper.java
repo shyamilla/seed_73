@@ -5,23 +5,20 @@ import org.springframework.stereotype.Component;
 import com.htc.trainingmanagement.dto.request.TraineeRequestDto;
 import com.htc.trainingmanagement.dto.response.TraineeResponseDto;
 import com.htc.trainingmanagement.entity.Trainee;
+import com.htc.trainingmanagement.entity.User;
 
 @Component
 public class TraineeMapper {
 
-    public Trainee toEntity(TraineeRequestDto requestDto) {
+    public Trainee toEntity(TraineeRequestDto requestDto, User user) {
 
         Trainee trainee = new Trainee();
-
-        trainee.setFirstName(requestDto.getFirstName());
-        trainee.setLastName(requestDto.getLastName());
-        trainee.setEmail(requestDto.getEmail());
         trainee.setPhoneNumber(requestDto.getPhoneNumber());
         trainee.setDepartment(requestDto.getDepartment());
         trainee.setDesignation(requestDto.getDesignation());
         trainee.setJoiningDate(requestDto.getJoiningDate());
         trainee.setStatus(requestDto.getStatus());
-
+        trainee.setUser(user);
         return trainee;
     }
 
@@ -29,9 +26,9 @@ public class TraineeMapper {
 
         return new TraineeResponseDto(
                 trainee.getTraineeId(),
-                trainee.getFirstName(),
-                trainee.getLastName(),
-                trainee.getEmail(),
+                trainee.getUser().getUserId(),
+                trainee.getUser().getUserName(),
+                trainee.getUser().getEmail(),
                 trainee.getPhoneNumber(),
                 trainee.getDepartment(),
                 trainee.getDesignation(),
@@ -41,17 +38,13 @@ public class TraineeMapper {
                 trainee.getUpdatedAt());
     }
 
-    public void updateEntity(
-            Trainee trainee,
-            TraineeRequestDto requestDto) {
+    public void updateEntity(Trainee trainee, TraineeRequestDto requestDto) {
 
-        trainee.setFirstName(requestDto.getFirstName());
-        trainee.setLastName(requestDto.getLastName());
-        trainee.setEmail(requestDto.getEmail());
         trainee.setPhoneNumber(requestDto.getPhoneNumber());
         trainee.setDepartment(requestDto.getDepartment());
         trainee.setDesignation(requestDto.getDesignation());
         trainee.setJoiningDate(requestDto.getJoiningDate());
         trainee.setStatus(requestDto.getStatus());
     }
+
 }

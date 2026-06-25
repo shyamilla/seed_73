@@ -11,13 +11,12 @@ import com.htc.trainingmanagement.entity.TrainingBatch;
 @Component
 public class TrainingBatchMapper {
 
-    public TrainingBatch toEntity(TrainingBatchRequestDto requestDto) {
+    public TrainingBatch toEntity(
+            TrainingBatchRequestDto requestDto,
+            Course course,
+            Trainer trainer) {
 
         TrainingBatch trainingBatch = new TrainingBatch();
-        Course course = new Course();
-        course.setCourseId(requestDto.getCourseId());
-        Trainer trainer = new Trainer();
-        trainer.setTrainerId(requestDto.getTrainerId());
 
         trainingBatch.setBatchCode(requestDto.getBatchCode());
         trainingBatch.setBatchName(requestDto.getBatchName());
@@ -25,6 +24,7 @@ public class TrainingBatchMapper {
         trainingBatch.setEndDate(requestDto.getEndDate());
         trainingBatch.setCapacity(requestDto.getCapacity());
         trainingBatch.setStatus(requestDto.getStatus());
+
         trainingBatch.setCourse(course);
         trainingBatch.setTrainer(trainer);
 
@@ -35,20 +35,12 @@ public class TrainingBatchMapper {
             TrainingBatch trainingBatch,
             TrainingBatchRequestDto requestDto) {
 
-        Course course = new Course();
-        course.setCourseId(requestDto.getCourseId());
-
-        Trainer trainer = new Trainer();
-        trainer.setTrainerId(requestDto.getTrainerId());
-
         trainingBatch.setBatchCode(requestDto.getBatchCode());
         trainingBatch.setBatchName(requestDto.getBatchName());
         trainingBatch.setStartDate(requestDto.getStartDate());
         trainingBatch.setEndDate(requestDto.getEndDate());
         trainingBatch.setCapacity(requestDto.getCapacity());
         trainingBatch.setStatus(requestDto.getStatus());
-        trainingBatch.setCourse(course);
-        trainingBatch.setTrainer(trainer);
     }
 
     public TrainingBatchResponseDto toResponseDto(
@@ -65,7 +57,7 @@ public class TrainingBatchMapper {
                 trainingBatch.getCourse().getCourseId(),
                 trainingBatch.getCourse().getCourseName(),
                 trainingBatch.getTrainer().getTrainerId(),
-                trainingBatch.getTrainer().getTrainerName(),
+                trainingBatch.getTrainer().getUser().getUserName(),
                 trainingBatch.getCreatedAt(),
                 trainingBatch.getUpdatedAt());
     }

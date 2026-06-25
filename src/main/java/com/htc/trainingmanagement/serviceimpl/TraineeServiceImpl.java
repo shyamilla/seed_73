@@ -7,9 +7,11 @@ import org.springframework.stereotype.Service;
 import com.htc.trainingmanagement.dto.request.TraineeRequestDto;
 import com.htc.trainingmanagement.dto.response.TraineeResponseDto;
 import com.htc.trainingmanagement.entity.Trainee;
+import com.htc.trainingmanagement.entity.User;
 import com.htc.trainingmanagement.exception.ResourceNotFoundException;
 import com.htc.trainingmanagement.mapper.TraineeMapper;
 import com.htc.trainingmanagement.repository.TraineeRepository;
+import com.htc.trainingmanagement.repository.UserRepository;
 import com.htc.trainingmanagement.service.TraineeService;
 
 import lombok.RequiredArgsConstructor;
@@ -19,12 +21,16 @@ import lombok.RequiredArgsConstructor;
 public class TraineeServiceImpl implements TraineeService {
 
     private final TraineeRepository traineeRepository;
+    private final UserRepository userRepository;
     private final TraineeMapper traineeMapper;
 
     @Override
-    public TraineeResponseDto createTrainee(TraineeRequestDto requestDto) {
+    public TraineeResponseDto createTrainee(TraineeRequestDto requestDto) throws ResourceNotFoundException {
 
-        Trainee trainee = traineeMapper.toEntity(requestDto);
+        User user = userRepository.findById(requestDto.getUserId()).orElseThrow(
+                () -> new ResourceNotFoundException("user not found with id: "));
+
+        Trainee trainee = traineeMapper.toEntity(requestDto, user);
         Trainee saveTrainee = traineeRepository.save(trainee);
         return traineeMapper.toResponseDto(saveTrainee);
     }
@@ -57,7 +63,13 @@ public class TraineeServiceImpl implements TraineeService {
                 .orElseThrow(() -> new ResourceNotFoundException(
                         "Trainee not found with id: " + traineeId));
 
+        User user = userRepository.findById(requestDto.getUserId())
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        "User not found with id: " + requestDto.getUserId()));
+
+        trainee.setUser(user);
         traineeMapper.updateEntity(trainee, requestDto);
+
         Trainee updateTrainee = traineeRepository.save(trainee);
 
         return traineeMapper.toResponseDto(updateTrainee);

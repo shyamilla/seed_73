@@ -28,14 +28,12 @@ public class TrainerController {
 
     private final TrainerServiceImpl trainerServiceImpl;
 
-    // public TrainerController(TrainerServiceImpl trainerServiceImpl) {
-    // this.trainerServiceImpl = trainerServiceImpl;
-    // }
+    
 
-    @PostMapping("/add")
-    public ResponseEntity<TrainerResponseDto> createTrainer(@Valid @RequestBody TrainerRequestDto requestDto) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(trainerServiceImpl.createTrainer(requestDto));
-    }
+    // @PostMapping("/add")
+    // public ResponseEntity<TrainerResponseDto> createTrainer(@Valid @RequestBody TrainerRequestDto requestDto) throws ResourceNotFoundException {
+    //     return ResponseEntity.status(HttpStatus.CREATED).body(trainerServiceImpl.createTrainer(requestDto));
+    // }
 
     @PutMapping("/update/{trainerId}")
     public ResponseEntity<TrainerResponseDto> updateTrainer(@PathVariable Long trainerId,

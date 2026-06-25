@@ -38,7 +38,7 @@ public class EnrollmentController {
 
     @PutMapping("/update/{enrollmentId}")
     public ResponseEntity<EnrollmentResponseDto> updateEnrollment(@PathVariable Long enrollmentId,
-            @Valid @RequestBody EnrollmentRequestDto requestDto) throws ResourceNotFoundException, EnrollmentException {
+            @Valid @RequestBody EnrollmentRequestDto requestDto) throws ResourceNotFoundException, EnrollmentException, CapacityExceededException {
         return ResponseEntity.status(HttpStatus.OK)
                 .body(enrollmentServiceImpl.updateEnrollment(enrollmentId, requestDto));
     }

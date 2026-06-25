@@ -5,26 +5,27 @@ import org.springframework.stereotype.Component;
 import com.htc.trainingmanagement.dto.request.TrainerRequestDto;
 import com.htc.trainingmanagement.dto.response.TrainerResponseDto;
 import com.htc.trainingmanagement.entity.Trainer;
+import com.htc.trainingmanagement.entity.User;
 
 @Component
 public class TrainerMapper {
 
-    public Trainer toEntity(TrainerRequestDto requestDto) {
+    // public Trainer toEntity(TrainerRequestDto requestDto, User user) {
 
-        Trainer trainer = new Trainer();
-        trainer.setTrainerName(requestDto.getTrainerName());
-        trainer.setEmail(requestDto.getEmail());
-        trainer.setPhoneNumber(requestDto.getPhoneNumber());
-        trainer.setSpecialization(requestDto.getSpecialization());
-        trainer.setYearsOfExperience(requestDto.getYearsOfExperience());
-        return trainer;
-    }
+    //     Trainer trainer = new Trainer();
+    //     trainer.setPhoneNumber(requestDto.getPhoneNumber());
+    //     trainer.setSpecialization(requestDto.getSpecialization());
+    //     trainer.setYearsOfExperience(requestDto.getYearsOfExperience());
+    //     trainer.setUser(user);
+    //     return trainer;
+    // }
 
     public TrainerResponseDto toResponseDto(Trainer trainer) {
         return new TrainerResponseDto(
                 trainer.getTrainerId(),
-                trainer.getTrainerName(),
-                trainer.getEmail(),
+                trainer.getUser().getUserId(),
+                trainer.getUser().getUserName(),
+                trainer.getUser().getEmail(),
                 trainer.getPhoneNumber(),
                 trainer.getSpecialization(),
                 trainer.getYearsOfExperience(),
@@ -33,10 +34,10 @@ public class TrainerMapper {
     }
 
     public void updateEntity(Trainer trainer, TrainerRequestDto requestDto) {
-        trainer.setTrainerName(requestDto.getTrainerName());
-        trainer.setEmail(requestDto.getEmail());
+
         trainer.setPhoneNumber(requestDto.getPhoneNumber());
         trainer.setSpecialization(requestDto.getSpecialization());
         trainer.setYearsOfExperience(requestDto.getYearsOfExperience());
     }
+
 }

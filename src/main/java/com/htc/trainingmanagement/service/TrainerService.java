@@ -8,7 +8,7 @@ import com.htc.trainingmanagement.exception.ResourceNotFoundException;
 
 public interface TrainerService {
 
-    TrainerResponseDto createTrainer(TrainerRequestDto requestDto);
+    // TrainerResponseDto createTrainer(TrainerRequestDto requestDto) throws ResourceNotFoundException;
 
     TrainerResponseDto getTrainerById(Long trainerId) throws ResourceNotFoundException;
 

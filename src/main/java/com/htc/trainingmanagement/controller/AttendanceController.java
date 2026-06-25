@@ -6,15 +6,18 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.htc.trainingmanagement.dto.request.AttendanceRequestDto;
 import com.htc.trainingmanagement.dto.response.AttendanceResponseDto;
+import com.htc.trainingmanagement.enums.AttendanceStatus;
 import com.htc.trainingmanagement.exception.ResourceNotFoundException;
 import com.htc.trainingmanagement.serviceimpl.AttendanceServiceImpl;
 
@@ -58,4 +61,17 @@ public class AttendanceController {
         return ResponseEntity.ok(attendanceServiceImpl.deleteAttendance(attendanceId));
     }
 
+    // other methods
+
+    @GetMapping("/trainee/{traineeId}")
+    public ResponseEntity<List<AttendanceResponseDto>> getAttendanceByTrainee(@PathVariable Long traineeId)
+            throws ResourceNotFoundException {
+        return ResponseEntity.status(HttpStatus.OK).body(attendanceServiceImpl.getAttendanceByTrainee(traineeId));
+    }
+
+    @PatchMapping("/{attendanceId}/status")
+    public ResponseEntity<AttendanceResponseDto> updateAttendanceStatus(@PathVariable Long attendanceId,
+            @RequestParam AttendanceStatus attendanceStatus) throws ResourceNotFoundException {
+        return ResponseEntity.status(HttpStatus.OK).body(attendanceServiceImpl.updateAttendanceStatus(attendanceId, attendanceStatus));
+    }
 }

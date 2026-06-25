@@ -22,6 +22,15 @@ public class CourseMapper {
         return course;
     }
 
+    public void updateEntity(Course course, CourseRequestDto requestDto) {
+
+        course.setCourseName(requestDto.getCourseName());
+        course.setDescription(requestDto.getDescription());
+        course.setDurationInDays(requestDto.getDurationInDays());
+        course.setMaxCapacity(requestDto.getMaxCapacity());
+        course.setStatus(requestDto.getStatus());
+    }
+
     public CourseResponseDto toResponseDto(Course course) {
 
         return new CourseResponseDto(
@@ -32,17 +41,7 @@ public class CourseMapper {
                 course.getMaxCapacity(),
                 course.getStatus(),
                 course.getCreatedAt(),
-                course.getUpdatedAt());
-    }
-
-    public void updateEntity(
-            Course course,
-            CourseRequestDto requestDto) {
-
-        course.setCourseName(requestDto.getCourseName());
-        course.setDescription(requestDto.getDescription());
-        course.setDurationInDays(requestDto.getDurationInDays());
-        course.setMaxCapacity(requestDto.getMaxCapacity());
-        course.setStatus(requestDto.getStatus());
+                course.getUpdatedAt()
+        );
     }
 }

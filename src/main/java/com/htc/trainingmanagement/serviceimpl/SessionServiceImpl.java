@@ -81,11 +81,8 @@ public class SessionServiceImpl implements SessionService {
                                                 "Training Batch not found with id: "
                                                                 + requestDto.getTrainingBatchId()));
 
-                sessionMapper.updateEntity(
-                                session,
-                                requestDto,
-                                trainingBatch);
-
+                sessionMapper.updateEntity(session,requestDto);
+                session.setTrainingBatch(trainingBatch);
                 Session updatedSession = sessionRepository.save(session);
 
                 return sessionMapper.toResponseDto(updatedSession);
