@@ -8,13 +8,23 @@ import com.htc.trainingmanagement.exception.ResourceNotFoundException;
 
 public interface TrainerService {
 
-    // TrainerResponseDto createTrainer(TrainerRequestDto requestDto) throws ResourceNotFoundException;
-
-    TrainerResponseDto getTrainerById(Long trainerId) throws ResourceNotFoundException;
+    TrainerResponseDto getTrainerById(Long trainerId)
+            throws ResourceNotFoundException;
 
     List<TrainerResponseDto> getAllTrainers();
 
-    TrainerResponseDto updateTrainer(Long trainerId,TrainerRequestDto requestDto) throws ResourceNotFoundException;
+    TrainerResponseDto updateTrainer(Long trainerId, TrainerRequestDto requestDto)
+            throws ResourceNotFoundException;
 
-    boolean deleteTrainer(Long trainerId) throws ResourceNotFoundException;
+    boolean deleteTrainer(Long trainerId)
+            throws ResourceNotFoundException;
+
+    List<TrainerResponseDto> getTrainersBySpecialization(String specialization);
+
+    List<TrainerResponseDto> getExperiencedTrainers(Integer yearsOfExperience);
+
+    TrainerResponseDto updateTrainerSpecialization(
+            Long trainerId,
+            String specialization)
+            throws ResourceNotFoundException;
 }

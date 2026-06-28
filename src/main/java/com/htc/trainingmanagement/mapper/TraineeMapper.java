@@ -10,15 +10,11 @@ import com.htc.trainingmanagement.entity.User;
 @Component
 public class TraineeMapper {
 
-    public Trainee toEntity(TraineeRequestDto requestDto, User user) {
+    public Trainee toEntity(User user) {
 
         Trainee trainee = new Trainee();
-        trainee.setPhoneNumber(requestDto.getPhoneNumber());
-        trainee.setDepartment(requestDto.getDepartment());
-        trainee.setDesignation(requestDto.getDesignation());
-        trainee.setJoiningDate(requestDto.getJoiningDate());
-        trainee.setStatus(requestDto.getStatus());
         trainee.setUser(user);
+
         return trainee;
     }
 
@@ -46,5 +42,4 @@ public class TraineeMapper {
         trainee.setJoiningDate(requestDto.getJoiningDate());
         trainee.setStatus(requestDto.getStatus());
     }
-
 }

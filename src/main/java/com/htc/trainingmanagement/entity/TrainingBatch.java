@@ -19,44 +19,45 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
+
 @Entity
 @Setter
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
-@ToString
-@Table(name = "665_training_batch") 
+@ToString(exclude = { "course", "trainer" })
+@Table(name = "665_training_batch")
 public class TrainingBatch extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "training_batch_id") 
+    @Column(name = "training_batch_id")
     private Long trainingbatchId;
 
-    @Column(name = "batch_code") 
+    @Column(name = "batch_code", nullable = false, unique = true)
     private String batchCode;
 
-    @Column(name = "batch_name") 
+    @Column(name = "batch_name", nullable = false)
     private String batchName;
 
-    @Column(name = "start_date") 
+    @Column(name = "start_date", nullable = false)
     private LocalDate startDate;
 
-    @Column(name = "end_date") 
+    @Column(name = "end_date", nullable = false)
     private LocalDate endDate;
 
-    @Column(name = "capacity") 
+    @Column(name = "capacity", nullable = false)
     private Integer capacity;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "status") 
+    @Column(name = "status", nullable = false)
     private BatchStatus status;
 
-    @ManyToOne // many batches belong to one course
-    @JoinColumn(name = "course_id") // foreign key refers to  Course table
+    @ManyToOne
+    @JoinColumn(name = "course_id", nullable = false)
     private Course course;
 
-    @ManyToOne // many batches belong to one trainer
-    @JoinColumn(name = "trainer_id") // foreign key refers to Trainer table
+    @ManyToOne
+    @JoinColumn(name = "trainer_id", nullable = false)
     private Trainer trainer;
 }

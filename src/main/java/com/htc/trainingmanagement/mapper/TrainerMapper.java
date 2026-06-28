@@ -10,17 +10,16 @@ import com.htc.trainingmanagement.entity.User;
 @Component
 public class TrainerMapper {
 
-    // public Trainer toEntity(TrainerRequestDto requestDto, User user) {
+    public Trainer toEntity(User user) {
 
-    //     Trainer trainer = new Trainer();
-    //     trainer.setPhoneNumber(requestDto.getPhoneNumber());
-    //     trainer.setSpecialization(requestDto.getSpecialization());
-    //     trainer.setYearsOfExperience(requestDto.getYearsOfExperience());
-    //     trainer.setUser(user);
-    //     return trainer;
-    // }
+        Trainer trainer = new Trainer();
+        trainer.setUser(user);
+
+        return trainer;
+    }
 
     public TrainerResponseDto toResponseDto(Trainer trainer) {
+
         return new TrainerResponseDto(
                 trainer.getTrainerId(),
                 trainer.getUser().getUserId(),
@@ -39,5 +38,4 @@ public class TrainerMapper {
         trainer.setSpecialization(requestDto.getSpecialization());
         trainer.setYearsOfExperience(requestDto.getYearsOfExperience());
     }
-
 }

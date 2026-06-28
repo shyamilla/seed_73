@@ -4,7 +4,6 @@ import java.time.LocalDate;
 
 import org.springframework.stereotype.Component;
 
-import com.htc.trainingmanagement.dto.request.EnrollmentRequestDto;
 import com.htc.trainingmanagement.dto.response.EnrollmentResponseDto;
 import com.htc.trainingmanagement.entity.Enrollment;
 import com.htc.trainingmanagement.entity.Trainee;
@@ -15,7 +14,6 @@ import com.htc.trainingmanagement.enums.EnrollmentStatus;
 public class EnrollmentMapper {
 
     public Enrollment toEntity(
-            EnrollmentRequestDto requestDto,
             Trainee trainee,
             TrainingBatch trainingBatch) {
 
@@ -39,13 +37,12 @@ public class EnrollmentMapper {
         enrollment.setTrainingBatch(trainingBatch);
     }
 
-    public EnrollmentResponseDto toResponseDto(
-            Enrollment enrollment) {
+    public EnrollmentResponseDto toResponseDto(Enrollment enrollment) {
 
         return new EnrollmentResponseDto(
                 enrollment.getEnrollmentId(),
                 enrollment.getEnrollmentDate(),
-                enrollment.getCompletionStatus().name(),
+                enrollment.getCompletionStatus(),
                 enrollment.getScore(),
                 enrollment.getFeedback(),
                 enrollment.getTrainee().getTraineeId(),

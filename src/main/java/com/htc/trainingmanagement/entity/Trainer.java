@@ -19,7 +19,7 @@ import lombok.ToString;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
-@ToString
+@ToString(exclude = "user")
 @Table(name = "665_trainer")
 public class Trainer extends BaseEntity {
 
@@ -28,19 +28,16 @@ public class Trainer extends BaseEntity {
     @Column(name = "trainer_id")
     private Long trainerId;
 
-    // @Column(name = "trainer_name")
-    // private String trainerName;
-    // @Column(name = "trainer_email", unique = true)
-    // private String email;
     @Column(name = "phone_number")
     private String phoneNumber;
+
     @Column(name = "specialization")
     private String specialization;
+
     @Column(name = "experience")
     private Integer yearsOfExperience;
 
     @OneToOne
     @JoinColumn(name = "user_id", nullable = false, unique = true)
     private User user;
-
 }

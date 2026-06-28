@@ -1,10 +1,14 @@
 package com.htc.trainingmanagement.mapper;
 
+import java.util.Set;
+import java.util.stream.Collectors;
+
 import org.springframework.stereotype.Component;
 
 import com.htc.trainingmanagement.dto.request.UserRequestDto;
 import com.htc.trainingmanagement.dto.response.UserResponseDto;
 import com.htc.trainingmanagement.entity.User;
+import com.htc.trainingmanagement.enums.RoleName;
 
 @Component
 public class UserMapper {
@@ -20,10 +24,17 @@ public class UserMapper {
     }
 
     public UserResponseDto toResponse(User user) {
+
+        Set<RoleName> roleNames = user.getRoles()
+                .stream()
+                .map(role -> role.getRoleName())
+                .collect(Collectors.toSet());
+
         return new UserResponseDto(
                 user.getUserId(),
                 user.getUserName(),
                 user.getEmail(),
+                roleNames,
                 user.getCreatedAt(),
                 user.getUpdatedAt());
     }
@@ -32,8 +43,5 @@ public class UserMapper {
 
         user.setUserName(requestDto.getUserName());
         user.setEmail(requestDto.getEmail());
-
     }
 }
-// Enum-to-Entity conversion requires repository access, so role mapping belongs
-// in the Service layer, not the Mapper.

@@ -9,7 +9,6 @@ import com.htc.trainingmanagement.entity.User;
 
 public interface UserRepository extends JpaRepository<User, Long> {
 
-
     // Checks if a user exists with the given email.
     boolean existsByEmail(String email);
 

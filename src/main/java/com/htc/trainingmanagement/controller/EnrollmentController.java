@@ -6,19 +6,22 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.htc.trainingmanagement.dto.request.EnrollmentRequestDto;
 import com.htc.trainingmanagement.dto.response.EnrollmentResponseDto;
+import com.htc.trainingmanagement.enums.EnrollmentStatus;
 import com.htc.trainingmanagement.exception.CapacityExceededException;
 import com.htc.trainingmanagement.exception.EnrollmentException;
 import com.htc.trainingmanagement.exception.ResourceNotFoundException;
-import com.htc.trainingmanagement.serviceimpl.EnrollmentServiceImpl;
+import com.htc.trainingmanagement.service.EnrollmentService;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -28,34 +31,78 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class EnrollmentController {
 
-    private final EnrollmentServiceImpl enrollmentServiceImpl;
+        private final EnrollmentService enrollmentService;
 
-    @PostMapping("/add")
-    public ResponseEntity<EnrollmentResponseDto> addEnrollment(@Valid @RequestBody EnrollmentRequestDto requestDto)
-            throws ResourceNotFoundException, EnrollmentException, CapacityExceededException {
-        return ResponseEntity.status(HttpStatus.CREATED).body(enrollmentServiceImpl.createEnrollment(requestDto));
-    }
+        @PostMapping("/add")
+        public ResponseEntity<EnrollmentResponseDto> addEnrollment(
+                        @Valid @RequestBody EnrollmentRequestDto requestDto)
+                        throws ResourceNotFoundException, EnrollmentException, CapacityExceededException {
 
-    @PutMapping("/update/{enrollmentId}")
-    public ResponseEntity<EnrollmentResponseDto> updateEnrollment(@PathVariable Long enrollmentId,
-            @Valid @RequestBody EnrollmentRequestDto requestDto) throws ResourceNotFoundException, EnrollmentException, CapacityExceededException {
-        return ResponseEntity.status(HttpStatus.OK)
-                .body(enrollmentServiceImpl.updateEnrollment(enrollmentId, requestDto));
-    }
+                return ResponseEntity.status(HttpStatus.CREATED)
+                                .body(enrollmentService.createEnrollment(requestDto));
+        }
 
-    @GetMapping("/find/{enrollmentId}")
-    public ResponseEntity<EnrollmentResponseDto> findById(@PathVariable Long enrollmentId)
-            throws ResourceNotFoundException {
-        return ResponseEntity.status(HttpStatus.OK).body(enrollmentServiceImpl.getEnrollmentById(enrollmentId));
-    }
+        @PutMapping("/update/{enrollmentId}")
+        public ResponseEntity<EnrollmentResponseDto> updateEnrollment(
+                        @PathVariable Long enrollmentId,
+                        @Valid @RequestBody EnrollmentRequestDto requestDto)
+                        throws ResourceNotFoundException, EnrollmentException, CapacityExceededException {
 
-    @GetMapping("/all")
-    public ResponseEntity<List<EnrollmentResponseDto>> getAllEnrollments() {
-        return ResponseEntity.status(HttpStatus.OK).body(enrollmentServiceImpl.getAllEnrollments());
-    }
+                return ResponseEntity.ok(
+                                enrollmentService.updateEnrollment(enrollmentId, requestDto));
+        }
 
-    @DeleteMapping("/delete/{enrollmentId}")
-    public ResponseEntity<Boolean> deleteEnrollment(@PathVariable Long enrollmentId) throws ResourceNotFoundException {
-        return ResponseEntity.status(HttpStatus.OK).body(enrollmentServiceImpl.deleteEnrollment(enrollmentId));
-    }
+        @GetMapping("/find/{enrollmentId}")
+        public ResponseEntity<EnrollmentResponseDto> getEnrollmentById(
+                        @PathVariable Long enrollmentId)
+                        throws ResourceNotFoundException {
+
+                return ResponseEntity.ok(
+                                enrollmentService.getEnrollmentById(enrollmentId));
+        }
+
+        @GetMapping("/all")
+        public ResponseEntity<List<EnrollmentResponseDto>> getAllEnrollments() {
+
+                return ResponseEntity.ok(enrollmentService.getAllEnrollments());
+        }
+
+        @DeleteMapping("/delete/{enrollmentId}")
+        public ResponseEntity<Boolean> deleteEnrollment(
+                        @PathVariable Long enrollmentId)
+                        throws ResourceNotFoundException {
+
+                return ResponseEntity.ok(
+                                enrollmentService.deleteEnrollment(enrollmentId));
+        }
+
+        @GetMapping("/trainee/{traineeId}")
+        public ResponseEntity<List<EnrollmentResponseDto>> getEnrollmentsByTrainee(
+                        @PathVariable Long traineeId)
+                        throws ResourceNotFoundException {
+
+                return ResponseEntity.ok(
+                                enrollmentService.getEnrollmentsByTrainee(traineeId));
+        }
+
+        @GetMapping("/batch/{trainingBatchId}")
+        public ResponseEntity<List<EnrollmentResponseDto>> getEnrollmentsByBatch(
+                        @PathVariable Long trainingBatchId)
+                        throws ResourceNotFoundException {
+
+                return ResponseEntity.ok(
+                                enrollmentService.getEnrollmentsByBatch(trainingBatchId));
+        }
+
+        @PatchMapping("/{enrollmentId}/status")
+        public ResponseEntity<EnrollmentResponseDto> updateCompletionStatus(
+                        @PathVariable Long enrollmentId,
+                        @RequestParam EnrollmentStatus completionStatus)
+                        throws ResourceNotFoundException {
+
+                return ResponseEntity.ok(
+                                enrollmentService.updateCompletionStatus(
+                                                enrollmentId,
+                                                completionStatus));
+        }
 }

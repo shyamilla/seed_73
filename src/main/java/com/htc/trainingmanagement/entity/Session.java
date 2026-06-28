@@ -26,7 +26,7 @@ import lombok.ToString;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
-@ToString
+@ToString(exclude = "trainingBatch")
 @Table(name = "655_session")
 public class Session extends BaseEntity {
 
@@ -35,26 +35,26 @@ public class Session extends BaseEntity {
     @Column(name = "session_id")
     private Long sessionId;
 
-    @Column(name = "session_title")
+    @Column(name = "session_title", nullable = false)
     private String sessionTitle;
 
-    @Column(name = "session_date")
+    @Column(name = "session_date", nullable = false)
     private LocalDate sessionDate;
 
-    @Column(name = "start_time")
+    @Column(name = "start_time", nullable = false)
     private LocalTime startTime;
 
-    @Column(name = "end_time")
+    @Column(name = "end_time", nullable = false)
     private LocalTime endTime;
 
     @Column(name = "topic")
     private String topic;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "session_status")
+    @Column(name = "session_status", nullable = false)
     private SessionStatus sessionStatus;
 
-   @ManyToOne // many sessions belong to one training batch
-    @JoinColumn(name = "training_batch_id") // foreign key referencing training_batch table
+    @ManyToOne
+    @JoinColumn(name = "training_batch_id", nullable = false)
     private TrainingBatch trainingBatch;
 }

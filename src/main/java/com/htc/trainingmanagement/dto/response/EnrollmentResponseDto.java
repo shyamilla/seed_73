@@ -3,6 +3,8 @@ package com.htc.trainingmanagement.dto.response;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
+import com.htc.trainingmanagement.enums.EnrollmentStatus;
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -11,9 +13,10 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class EnrollmentResponseDto {
+
     private Long enrollmentId;
     private LocalDate enrollmentDate;
-    private String completionStatus;
+    private EnrollmentStatus completionStatus;
     private Double score;
     private String feedback;
 

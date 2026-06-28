@@ -10,25 +10,29 @@ import com.htc.trainingmanagement.exception.ResourceNotFoundException;
 
 public interface UserService {
 
-    UserResponseDto createUser(UserRequestDto requestDto) throws DuplicateResourceException, ResourceNotFoundException;
+        UserResponseDto createUser(UserRequestDto requestDto)
+                        throws DuplicateResourceException, ResourceNotFoundException;
 
-    UserResponseDto updateUser(Long userId, UserRequestDto requestDto)
-            throws ResourceNotFoundException, DuplicateResourceException;
+        UserResponseDto updateUser(Long userId, UserRequestDto requestDto)
+                        throws ResourceNotFoundException, DuplicateResourceException;
 
-    boolean deleteUser(Long userId) throws ResourceNotFoundException;
+        boolean deleteUser(Long userId) throws ResourceNotFoundException;
 
-    UserResponseDto getUserById(Long userId) throws ResourceNotFoundException;
+        UserResponseDto getUserById(Long userId) throws ResourceNotFoundException;
 
-    List<UserResponseDto> getAllUsers();
+        List<UserResponseDto> getAllUsers();
 
-    // others
+        // others
 
-    List<UserResponseDto> getUsersByRole(RoleName roleName)
-            throws ResourceNotFoundException;
+        List<UserResponseDto> getUsersByRole(RoleName roleName)
+                        throws ResourceNotFoundException;
 
-    UserResponseDto assignRole(Long userId, RoleName roleName)
-            throws ResourceNotFoundException, DuplicateResourceException;
+        UserResponseDto assignRole(Long userId, RoleName roleName)
+                        throws ResourceNotFoundException, DuplicateResourceException;
 
-    UserResponseDto removeRole(Long userId, RoleName roleName)
-            throws ResourceNotFoundException;
+        UserResponseDto removeRole(Long userId, RoleName roleName)
+                        throws ResourceNotFoundException;
+
+        UserResponseDto changePassword(Long userId, String newPassword)
+                        throws ResourceNotFoundException;
 }

@@ -25,7 +25,7 @@ import lombok.ToString;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
-@ToString
+@ToString(exclude = {"trainee", "session"})
 @Table(name = "655_attendance")
 public class Attendance extends BaseEntity {
 
@@ -34,21 +34,21 @@ public class Attendance extends BaseEntity {
     @Column(name = "attendance_id")
     private Long attendanceId;
 
-    @Column(name = "attendance_date")
+    @Column(name = "attendance_date", nullable = false)
     private LocalDate attendanceDate;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "attendance_status")
+    @Column(name = "attendance_status", nullable = false)
     private AttendanceStatus attendanceStatus;
 
     @Column(name = "remarks")
     private String remarks;
 
-    @ManyToOne // many attendance records belong to one trainee
-    @JoinColumn(name = "trainee_id") // foreign key referencing trainee table
+    @ManyToOne
+    @JoinColumn(name = "trainee_id", nullable = false)
     private Trainee trainee;
 
-    @ManyToOne // many attendance records belong to one session
-    @JoinColumn(name = "session_id") // foreign key referencing session table
+    @ManyToOne
+    @JoinColumn(name = "session_id", nullable = false)
     private Session session;
 }

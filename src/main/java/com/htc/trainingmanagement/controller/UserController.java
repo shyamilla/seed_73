@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.htc.trainingmanagement.dto.request.UserRequestDto;
@@ -19,7 +20,7 @@ import com.htc.trainingmanagement.dto.response.UserResponseDto;
 import com.htc.trainingmanagement.enums.RoleName;
 import com.htc.trainingmanagement.exception.DuplicateResourceException;
 import com.htc.trainingmanagement.exception.ResourceNotFoundException;
-import com.htc.trainingmanagement.serviceimpl.UserServiceImpl;
+import com.htc.trainingmanagement.service.UserService;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -29,51 +30,88 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class UserController {
 
-    private final UserServiceImpl userServiceImpl;
+        private final UserService userService;
 
-    @PostMapping("/add")
-    public ResponseEntity<UserResponseDto> createUser(@Valid @RequestBody UserRequestDto requestDto)
-            throws DuplicateResourceException, ResourceNotFoundException {
-        return ResponseEntity.status(HttpStatus.CREATED).body(userServiceImpl.createUser(requestDto));
-    }
+        @PostMapping("/add")
+        public ResponseEntity<UserResponseDto> createUser(
+                        @Valid @RequestBody UserRequestDto requestDto)
+                        throws DuplicateResourceException, ResourceNotFoundException {
 
-    @PutMapping("/update/{userId}")
-    public ResponseEntity<UserResponseDto> updateUser(@PathVariable Long userId,@Valid @RequestBody UserRequestDto requestDto)
-            throws ResourceNotFoundException, DuplicateResourceException {
-        return ResponseEntity.status(HttpStatus.OK).body(userServiceImpl.updateUser(userId, requestDto));
-    }
+                return ResponseEntity.status(HttpStatus.CREATED)
+                                .body(userService.createUser(requestDto));
+        }
 
-    @DeleteMapping("/delete/{userId}")
-    public ResponseEntity<Boolean> deleteUser(@PathVariable Long userId) throws ResourceNotFoundException {
-        return ResponseEntity.status(HttpStatus.OK).body(userServiceImpl.deleteUser(userId));
-    }
+        @PutMapping("/update/{userId}")
+        public ResponseEntity<UserResponseDto> updateUser(
+                        @PathVariable Long userId,
+                        @Valid @RequestBody UserRequestDto requestDto)
+                        throws ResourceNotFoundException, DuplicateResourceException {
 
-    @GetMapping("/find/{userId}")
-    public ResponseEntity<UserResponseDto> findById(@PathVariable Long userId) throws ResourceNotFoundException {
-        return ResponseEntity.status(HttpStatus.OK).body(userServiceImpl.getUserById(userId));
-    }
+                return ResponseEntity.ok(
+                                userService.updateUser(userId, requestDto));
+        }
 
-    @GetMapping("/all")
-    public ResponseEntity<List<UserResponseDto>> getAllUsers() {
-        return ResponseEntity.status(HttpStatus.OK).body(userServiceImpl.getAllUsers());
-    }
+        @DeleteMapping("/delete/{userId}")
+        public ResponseEntity<Boolean> deleteUser(
+                        @PathVariable Long userId)
+                        throws ResourceNotFoundException {
 
-    @GetMapping("/roles/{roleName}")
-    public ResponseEntity<List<UserResponseDto>> getUsersByRoles(@PathVariable RoleName roleName)
-            throws ResourceNotFoundException {
-        return ResponseEntity.status(HttpStatus.OK).body(userServiceImpl.getUsersByRole(roleName));
-    }
+                return ResponseEntity.ok(
+                                userService.deleteUser(userId));
+        }
 
-    @PatchMapping("/{userId}/assign")
-    public ResponseEntity<UserResponseDto> assignRole(@PathVariable Long userId, @RequestBody RoleName roleName)
-            throws ResourceNotFoundException, DuplicateResourceException {
-        return ResponseEntity.status(HttpStatus.OK).body(userServiceImpl.assignRole(userId, roleName));
+        @GetMapping("/find/{userId}")
+        public ResponseEntity<UserResponseDto> getUserById(
+                        @PathVariable Long userId)
+                        throws ResourceNotFoundException {
 
-    }
+                return ResponseEntity.ok(
+                                userService.getUserById(userId));
+        }
 
-    @PatchMapping("/{userId}/remove")
-    public ResponseEntity<UserResponseDto> removeRole(@PathVariable Long userId, @RequestBody RoleName roleName)
-            throws ResourceNotFoundException {
-        return ResponseEntity.status(HttpStatus.OK).body(userServiceImpl.removeRole(userId, roleName));
-    }
+        @GetMapping("/all")
+        public ResponseEntity<List<UserResponseDto>> getAllUsers() {
+
+                return ResponseEntity.ok(
+                                userService.getAllUsers());
+        }
+
+        @GetMapping("/role/{roleName}")
+        public ResponseEntity<List<UserResponseDto>> getUsersByRole(
+                        @PathVariable RoleName roleName)
+                        throws ResourceNotFoundException {
+
+                return ResponseEntity.ok(
+                                userService.getUsersByRole(roleName));
+        }
+
+        @PatchMapping("/{userId}/assign/{roleName}")
+        public ResponseEntity<UserResponseDto> assignRole(
+                        @PathVariable Long userId,
+                        @PathVariable RoleName roleName)
+                        throws ResourceNotFoundException, DuplicateResourceException {
+
+                return ResponseEntity.ok(
+                                userService.assignRole(userId, roleName));
+        }
+
+        @PatchMapping("/{userId}/remove/{roleName}")
+        public ResponseEntity<UserResponseDto> removeRole(
+                        @PathVariable Long userId,
+                        @PathVariable RoleName roleName)
+                        throws ResourceNotFoundException {
+
+                return ResponseEntity.ok(
+                                userService.removeRole(userId, roleName));
+        }
+
+        @PatchMapping("/{userId}/password")
+        public ResponseEntity<UserResponseDto> changePassword(
+                        @PathVariable Long userId,
+                        @RequestParam String newPassword)
+                        throws ResourceNotFoundException {
+
+                return ResponseEntity.ok(
+                                userService.changePassword(userId, newPassword));
+        }
 }

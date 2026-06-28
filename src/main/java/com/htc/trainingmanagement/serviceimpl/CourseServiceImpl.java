@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import com.htc.trainingmanagement.dto.request.CourseRequestDto;
 import com.htc.trainingmanagement.dto.response.CourseResponseDto;
 import com.htc.trainingmanagement.entity.Course;
+import com.htc.trainingmanagement.enums.CourseStatus;
 import com.htc.trainingmanagement.exception.DuplicateResourceException;
 import com.htc.trainingmanagement.exception.ResourceNotFoundException;
 import com.htc.trainingmanagement.mapper.CourseMapper;
@@ -19,101 +20,135 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class CourseServiceImpl implements CourseService {
 
-    private final CourseRepository courseRepository;
-    private final CourseMapper courseMapper;
+        private final CourseRepository courseRepository;
+        private final CourseMapper courseMapper;
 
-    @Override
-    public CourseResponseDto createCourse(CourseRequestDto requestDto)
-            throws DuplicateResourceException {
+        @Override
+        public CourseResponseDto createCourse(CourseRequestDto requestDto)
+                        throws DuplicateResourceException {
 
-        // duplicate check
-        if (courseRepository.existsByCourseName(requestDto.getCourseName())) {
-            throw new DuplicateResourceException(
-                    "Course already exists with name: " + requestDto.getCourseName());
+                // Checks whether a course with the same name already exists.
+                if (courseRepository.existsByCourseName(requestDto.getCourseName())) {
+                        throw new DuplicateResourceException(
+                                        "Course already exists with name: " + requestDto.getCourseName());
+                }
+
+                Course course = courseMapper.toEntity(requestDto);
+
+                Course savedCourse = courseRepository.save(course);
+
+                return courseMapper.toResponseDto(savedCourse);
         }
 
-        Course course = courseMapper.toEntity(requestDto);
-        Course savedCourse = courseRepository.save(course);
+        @Override
+        public CourseResponseDto getCourseById(Long courseId)
+                        throws ResourceNotFoundException {
 
-        return courseMapper.toResponseDto(savedCourse);
-    }
+                Course course = getCourseEntityById(courseId);
 
-    @Override
-    public CourseResponseDto getCourseById(Long courseId)
-            throws ResourceNotFoundException {
-
-        Course course = courseRepository.findById(courseId)
-                .orElseThrow(() -> new ResourceNotFoundException(
-                        "Course not found with id: " + courseId));
-
-        return courseMapper.toResponseDto(course);
-    }
-
-    @Override
-    public List<CourseResponseDto> getAllCourses() {
-
-        return courseRepository.findAll()
-                .stream()
-                .map(courseMapper::toResponseDto)
-                .toList();
-    }
-
-    @Override
-    public CourseResponseDto updateCourse(Long courseId, CourseRequestDto requestDto)
-            throws ResourceNotFoundException {
-
-        Course course = courseRepository.findById(courseId)
-                .orElseThrow(() -> new ResourceNotFoundException(
-                        "Course not found with id: " + courseId));
-
-        courseMapper.updateEntity(course, requestDto);
-
-        Course updatedCourse = courseRepository.save(course);
-
-        return courseMapper.toResponseDto(updatedCourse);
-    }
-
-    @Override
-    public boolean deleteCourse(Long courseId)
-            throws ResourceNotFoundException {
-
-        Course course = courseRepository.findById(courseId)
-                .orElseThrow(() -> new ResourceNotFoundException(
-                        "Course not found with id: " + courseId));
-
-        courseRepository.delete(course);
-
-        return true;
-    }
-
-    // other methods
-
-    @Override
-    public List<CourseResponseDto> searchCoursesByName(String courseName) {
-        return courseRepository.findByCourseNameContainingIgnoreCase(courseName).stream()
-                .map(courseMapper::toResponseDto).toList();
-    }
-
-    @Override
-    public CourseResponseDto updateCourseDuration(
-            Long courseId,
-            Integer duration)
-            throws ResourceNotFoundException {
-
-        if (duration < 0) {
-            throw new IllegalArgumentException(
-                    "Course duration must be greater than 0");
+                return courseMapper.toResponseDto(course);
         }
 
-        Course course = courseRepository.findById(courseId)
-                .orElseThrow(() -> new ResourceNotFoundException(
-                        "Course not found with id: " + courseId));
+        @Override
+        public List<CourseResponseDto> getAllCourses() {
 
-        course.setDurationInDays(duration);
+                return courseRepository.findAll()
+                                .stream()
+                                .map(courseMapper::toResponseDto)
+                                .toList();
+        }
 
-        Course updatedCourse = courseRepository.save(course);
+        @Override
+        public CourseResponseDto updateCourse(Long courseId, CourseRequestDto requestDto)
+                        throws ResourceNotFoundException, DuplicateResourceException {
 
-        return courseMapper.toResponseDto(updatedCourse);
-    }
+                Course course = getCourseEntityById(courseId);
 
+                // Prevents updating a course with another existing course name.
+                if (!course.getCourseName().equalsIgnoreCase(requestDto.getCourseName())
+                                && courseRepository.existsByCourseName(requestDto.getCourseName())) {
+                        throw new DuplicateResourceException(
+                                        "Course already exists with name: " + requestDto.getCourseName());
+                }
+
+                courseMapper.updateEntity(course, requestDto);
+
+                Course updatedCourse = courseRepository.save(course);
+
+                return courseMapper.toResponseDto(updatedCourse);
+        }
+
+        @Override
+        public boolean deleteCourse(Long courseId)
+                        throws ResourceNotFoundException {
+
+                Course course = getCourseEntityById(courseId);
+
+                courseRepository.delete(course);
+
+                return true;
+        }
+
+        @Override
+        public List<CourseResponseDto> searchCoursesByName(String courseName) {
+
+                return courseRepository.findByCourseNameContainingIgnoreCase(courseName)
+                                .stream()
+                                .map(courseMapper::toResponseDto)
+                                .toList();
+        }
+
+        @Override
+        public List<CourseResponseDto> getActiveCourses() {
+
+                return courseRepository.findByStatus(CourseStatus.ACTIVE)
+                                .stream()
+                                .map(courseMapper::toResponseDto)
+                                .toList();
+        }
+
+        @Override
+        public CourseResponseDto updateCourseDuration(Long courseId, Integer duration)
+                        throws ResourceNotFoundException {
+
+                // Course duration should be greater than zero.
+                if (duration == null || duration <= 0) {
+                        throw new IllegalArgumentException(
+                                        "Course duration must be greater than 0");
+                }
+
+                Course course = getCourseEntityById(courseId);
+
+                course.setDurationInDays(duration);
+
+                Course updatedCourse = courseRepository.save(course);
+
+                return courseMapper.toResponseDto(updatedCourse);
+        }
+
+        @Override
+        public CourseResponseDto updateCourseStatus(Long courseId, CourseStatus status)
+                        throws ResourceNotFoundException {
+
+                if (status == null) {
+                        throw new IllegalArgumentException("Course status is required");
+                }
+
+                Course course = getCourseEntityById(courseId);
+
+                // Updates only the course status.
+                course.setStatus(status);
+
+                Course updatedCourse = courseRepository.save(course);
+
+                return courseMapper.toResponseDto(updatedCourse);
+        }
+
+        private Course getCourseEntityById(Long courseId)
+                        throws ResourceNotFoundException {
+
+                return courseRepository.findById(courseId)
+                                .orElseThrow(() -> new ResourceNotFoundException(
+                                                "Course not found with id: " + courseId));
+        }
 }

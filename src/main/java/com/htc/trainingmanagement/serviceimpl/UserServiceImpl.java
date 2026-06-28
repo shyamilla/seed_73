@@ -67,21 +67,25 @@ public class UserServiceImpl implements UserService {
                                 .orElseThrow(() -> new ResourceNotFoundException(
                                                 "User not found with ID: " + userId + " to update"));
 
-                if (!user.getEmail().equals(requestDto.getEmail())
+                // Checks if another user already has the requested email.
+                if (!user.getEmail().equalsIgnoreCase(requestDto.getEmail())
                                 && userRepository.existsByEmail(requestDto.getEmail())) {
 
                         throw new DuplicateResourceException(
-                                        "User already exists with email: "
-                                                        + requestDto.getEmail());
+                                        "User already exists with email: " + requestDto.getEmail());
                 }
 
                 userMapper.updateEntity(user, requestDto);
 
-                user.setPassword(requestDto.getPassword());
+                // Encodes the password before saving it.
+                user.setPassword(passwordEncoder.encode(requestDto.getPassword()));
 
                 user.setRoles(getRoles(requestDto.getRoles()));
 
                 User updatedUser = userRepository.save(user);
+
+                // Creates trainer or trainee profile if the updated role requires it.
+                createProfiles(updatedUser);
 
                 return userMapper.toResponse(updatedUser);
         }
@@ -195,6 +199,21 @@ public class UserServiceImpl implements UserService {
                 }
 
                 user.getRoles().remove(role);
+
+                User updatedUser = userRepository.save(user);
+
+                return userMapper.toResponse(updatedUser);
+        }
+
+        @Override
+        public UserResponseDto changePassword(Long userId, String newPassword)
+                        throws ResourceNotFoundException {
+
+                User user = userRepository.findById(userId)
+                                .orElseThrow(() -> new ResourceNotFoundException(
+                                                "User not found with ID: " + userId));
+
+                user.setPassword(passwordEncoder.encode(newPassword));
 
                 User updatedUser = userRepository.save(user);
 

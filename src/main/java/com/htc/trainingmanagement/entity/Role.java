@@ -1,6 +1,5 @@
 package com.htc.trainingmanagement.entity;
 
-
 import com.htc.trainingmanagement.enums.RoleName;
 
 import jakarta.persistence.Column;
@@ -25,6 +24,7 @@ import lombok.ToString;
 @ToString
 @Table(name = "665_roles")
 public class Role extends BaseEntity {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "role_id")

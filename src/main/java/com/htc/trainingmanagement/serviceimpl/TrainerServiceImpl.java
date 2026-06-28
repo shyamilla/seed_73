@@ -7,11 +7,9 @@ import org.springframework.stereotype.Service;
 import com.htc.trainingmanagement.dto.request.TrainerRequestDto;
 import com.htc.trainingmanagement.dto.response.TrainerResponseDto;
 import com.htc.trainingmanagement.entity.Trainer;
-import com.htc.trainingmanagement.entity.User;
 import com.htc.trainingmanagement.exception.ResourceNotFoundException;
 import com.htc.trainingmanagement.mapper.TrainerMapper;
 import com.htc.trainingmanagement.repository.TrainerRepository;
-import com.htc.trainingmanagement.repository.UserRepository;
 import com.htc.trainingmanagement.service.TrainerService;
 
 import lombok.RequiredArgsConstructor;
@@ -22,28 +20,12 @@ public class TrainerServiceImpl implements TrainerService {
 
     private final TrainerRepository trainerRepository;
     private final TrainerMapper trainerMapper;
-    // private final UserRepository userRepository;
-
-    // @Override
-    // public TrainerResponseDto createTrainer(TrainerRequestDto requestDto) throws ResourceNotFoundException {
-
-    //     User user = userRepository.findById(requestDto.getUserId())
-    //             .orElseThrow(() -> new ResourceNotFoundException(
-    //                     "User not found with id: " + requestDto.getUserId()));
-
-    //     Trainer trainer = trainerMapper.toEntity(requestDto, user);
-
-    //     Trainer savedTrainer = trainerRepository.save(trainer);
-
-    //     return trainerMapper.toResponseDto(savedTrainer);
-    // }
 
     @Override
-    public TrainerResponseDto getTrainerById(Long trainerId) throws ResourceNotFoundException {
+    public TrainerResponseDto getTrainerById(Long trainerId)
+            throws ResourceNotFoundException {
 
-        Trainer trainer = trainerRepository.findById(trainerId)
-                .orElseThrow(() -> new ResourceNotFoundException(
-                        "Trainer not found with id: " + trainerId));
+        Trainer trainer = getTrainerEntityById(trainerId);
 
         return trainerMapper.toResponseDto(trainer);
     }
@@ -58,11 +40,12 @@ public class TrainerServiceImpl implements TrainerService {
     }
 
     @Override
-    public TrainerResponseDto updateTrainer(Long trainerId, TrainerRequestDto requestDto) throws ResourceNotFoundException {
+    public TrainerResponseDto updateTrainer(
+            Long trainerId,
+            TrainerRequestDto requestDto)
+            throws ResourceNotFoundException {
 
-        Trainer trainer = trainerRepository.findById(trainerId)
-                .orElseThrow(() -> new ResourceNotFoundException(
-                        "Trainer not found with id: " + trainerId));
+        Trainer trainer = getTrainerEntityById(trainerId);
 
         trainerMapper.updateEntity(trainer, requestDto);
 
@@ -72,14 +55,55 @@ public class TrainerServiceImpl implements TrainerService {
     }
 
     @Override
-    public boolean deleteTrainer(Long trainerId) throws ResourceNotFoundException {
+    public boolean deleteTrainer(Long trainerId)
+            throws ResourceNotFoundException {
 
-        Trainer trainer = trainerRepository.findById(trainerId)
-                .orElseThrow(() -> new ResourceNotFoundException(
-                        "Trainer not found with id: " + trainerId));
+        Trainer trainer = getTrainerEntityById(trainerId);
 
         trainerRepository.delete(trainer);
 
         return true;
+    }
+
+    @Override
+    public List<TrainerResponseDto> getTrainersBySpecialization(String specialization) {
+
+        return trainerRepository.findBySpecializationIgnoreCase(specialization)
+                .stream()
+                .map(trainerMapper::toResponseDto)
+                .toList();
+    }
+
+    @Override
+    public List<TrainerResponseDto> getExperiencedTrainers(Integer yearsOfExperience) {
+
+        return trainerRepository.findByYearsOfExperienceGreaterThanEqual(yearsOfExperience)
+                .stream()
+                .map(trainerMapper::toResponseDto)
+                .toList();
+    }
+
+    @Override
+    public TrainerResponseDto updateTrainerSpecialization(
+            Long trainerId,
+            String specialization)
+            throws ResourceNotFoundException {
+
+        Trainer trainer = getTrainerEntityById(trainerId);
+
+        // Updates only trainer specialization.
+        trainer.setSpecialization(specialization);
+
+        Trainer updatedTrainer = trainerRepository.save(trainer);
+
+        return trainerMapper.toResponseDto(updatedTrainer);
+    }
+
+    private Trainer getTrainerEntityById(Long trainerId)
+            throws ResourceNotFoundException {
+
+        return trainerRepository.findById(trainerId)
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        "Trainer not found with id: " + trainerId));
     }
 }

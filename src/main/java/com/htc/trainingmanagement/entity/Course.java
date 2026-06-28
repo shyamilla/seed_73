@@ -30,19 +30,19 @@ public class Course extends BaseEntity {
     @Column(name = "course_id")
     private Long courseId;
 
-    @Column(name = "course_name")
+    @Column(name = "course_name", nullable = false)
     private String courseName;
 
     @Column(name = "description")
     private String description;
 
-    @Column(name = "course_duration")
+    @Column(name = "course_duration", nullable = false)
     private Integer durationInDays;
 
-    @Column(name = "capacity")
+    @Column(name = "capacity", nullable = false)
     private Integer maxCapacity;
 
-    @Column(name = "course_status")
     @Enumerated(EnumType.STRING)
+    @Column(name = "course_status", nullable = false)
     private CourseStatus status;
 }

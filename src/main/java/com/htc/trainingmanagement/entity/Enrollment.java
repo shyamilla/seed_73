@@ -25,19 +25,20 @@ import lombok.ToString;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
-@ToString
+@ToString(exclude = {"trainee", "trainingBatch"})
 @Table(name = "655_enrollment")
 public class Enrollment extends BaseEntity {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "enrollment_id")
     private Long enrollmentId;
 
-    @Column(name = "enrollment_date")
+    @Column(name = "enrollment_date", nullable = false)
     private LocalDate enrollmentDate;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "completion_status")
+    @Column(name = "completion_status", nullable = false)
     private EnrollmentStatus completionStatus;
 
     @Column(name = "score")
@@ -46,11 +47,11 @@ public class Enrollment extends BaseEntity {
     @Column(name = "feedback")
     private String feedback;
 
-    @ManyToOne // many enrollments belong to one trainee
-    @JoinColumn(name = "trainee_id") // foreign key referencing trainee table
+    @ManyToOne
+    @JoinColumn(name = "trainee_id", nullable = false)
     private Trainee trainee;
 
-    @ManyToOne // many enrollments belong to one training batch
-    @JoinColumn(name = "training_batch_id") // foreign key referencing training_batch table
+    @ManyToOne
+    @JoinColumn(name = "training_batch_id", nullable = false)
     private TrainingBatch trainingBatch;
 }
