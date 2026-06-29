@@ -16,6 +16,7 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@ValidEmail
 public class UserRequestDto {
 
     @NotBlank(message = "User name must not be blank")
@@ -24,7 +25,6 @@ public class UserRequestDto {
 
     @NotBlank(message = "Email is required")
     @Email(message = "Email must be valid")
-    @ValidEmail
     private String email;
     
     @NotBlank(message = "Password must not be empty")
