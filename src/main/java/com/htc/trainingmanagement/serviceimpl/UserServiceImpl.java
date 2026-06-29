@@ -79,7 +79,6 @@ public class UserServiceImpl implements UserService {
 
                 // Encodes the password before saving it.
                 user.setPassword(passwordEncoder.encode(requestDto.getPassword()));
-
                 user.setRoles(getRoles(requestDto.getRoles()));
 
                 User updatedUser = userRepository.save(user);

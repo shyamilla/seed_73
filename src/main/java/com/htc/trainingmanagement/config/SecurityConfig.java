@@ -2,35 +2,68 @@ package com.htc.trainingmanagement.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.config.Customizer;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+
+import com.htc.trainingmanagement.serviceimpl.CustomUserDetailsService;
+
+import lombok.RequiredArgsConstructor;
+
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 
 @Configuration
+@RequiredArgsConstructor
 public class SecurityConfig {
 
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
-    }
+        private final JwtAuthenticationFilter jwtAuthenticationFilter;
+        private final CustomUserDetailsService customUserDetailsService;
 
-    @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+        // For password hashing with Bcrypt
+        @Bean
+        public PasswordEncoder passwordEncoder() {
+                return new BCryptPasswordEncoder();
+        }
 
-        http
-                // .csrf(Customizer.withDefaults()) // Enables CSRF protection.
-                .csrf(csrf -> csrf.disable()) // disables CSRF protection.
+        // DAO-based authentication provider that authenticates users using the
+        // database.
+        @Bean
+        public DaoAuthenticationProvider authenticationProvider() {
 
-                .sessionManagement(session -> session // Creates a session only when required.
-                        .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED))
+                // Creates a DaoAuthenticationProvider with the custom UserDetailsService.
+                DaoAuthenticationProvider provider = new DaoAuthenticationProvider(customUserDetailsService);
 
-                .formLogin(Customizer.withDefaults()) // Enables browser-based login page.
+                // Sets BCrypt as the password encoder for password verification.
+                provider.setPasswordEncoder(passwordEncoder());
 
-                .httpBasic(Customizer.withDefaults()); // Enables browser-based login page.
+                // Returns the configured authentication provider.
+                return provider;
+        }
 
-        return http.build();
-    }
+        @Bean
+        public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
+                return config.getAuthenticationManager();
+        }
+
+        @Bean
+        public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+
+                http.csrf(csrf -> csrf.disable())
+                                .authenticationProvider(authenticationProvider())
+                                .authorizeHttpRequests(auth -> auth.requestMatchers("/auth/login", "/error").permitAll()
+                                                .anyRequest().authenticated())
+                                .sessionManagement(session -> session
+                                                .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
+                                .formLogin(form -> form.disable())
+                                .httpBasic(httpBasics -> httpBasics.disable());
+
+                return http.build();
+        }
+
 }
