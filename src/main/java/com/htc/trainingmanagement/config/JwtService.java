@@ -21,10 +21,12 @@ public class JwtService {
     @Value("${jwt.expiration}")
     private long jwtExpiration;
 
-    private SecretKey getSigningKey() {
+    private SecretKey getSigningKey() { // Creates the secret key used to sign and verify JWTs.
         return Keys.hmacShaKeyFor(secretKey.getBytes());
     }
 
+    // Generates a signed JWT containing the authenticated user's username, issue
+    // time, and expiration time.
     public String generateToken(UserDetails userDetails) {
         return Jwts.builder()
                 .subject(userDetails.getUsername())
@@ -34,20 +36,24 @@ public class JwtService {
                 .compact();
     }
 
+    // Extracts the username (subject) from the JWT after verifying its signature.
     public String extractUserName(String token) {
         return extractAllClaims(token).getSubject();
     }
 
+    // Verifies that the token belongs to the given user and has not expired.
     public boolean isTokenValid(String token, UserDetails userDetails) {
         String userName = extractUserName(token);
 
         return userName.equals(userDetails.getUsername()) && !isTokenExpired(token);
     }
 
+    // Checks whether the JWT's expiration time has passed.
     private boolean isTokenExpired(String token) {
         return extractAllClaims(token).getExpiration().before(new Date());
     }
 
+    // Validates the JWT signature and extracts all claims stored in the token.
     private Claims extractAllClaims(String token) {
         return Jwts.parser().verifyWith(getSigningKey()).build().parseSignedClaims(token).getPayload();
     }

@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.htc.trainingmanagement.dto.request.TrainerRequestDto;
 import com.htc.trainingmanagement.dto.response.TrainerResponseDto;
+import com.htc.trainingmanagement.dto.response.TrainerTraineeResponseDto;
 import com.htc.trainingmanagement.exception.ResourceNotFoundException;
 import com.htc.trainingmanagement.service.TrainerService;
 
@@ -89,5 +90,12 @@ public class TrainerController {
                                 trainerService.updateTrainerSpecialization(
                                                 trainerId,
                                                 specialization));
+        }
+
+        @GetMapping("/my-trainees")
+        public ResponseEntity<List<TrainerTraineeResponseDto>> getMyTrainees() throws ResourceNotFoundException {
+
+                return ResponseEntity.ok(
+                                trainerService.getMyTrainees());
         }
 }

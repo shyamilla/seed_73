@@ -9,25 +9,27 @@ import com.htc.trainingmanagement.exception.ResourceNotFoundException;
 
 public interface TraineeService {
 
-    TraineeResponseDto getTraineeById(Long traineeId)
-            throws ResourceNotFoundException;
+        TraineeResponseDto getTraineeById(Long traineeId)
+                        throws ResourceNotFoundException;
 
-    List<TraineeResponseDto> getAllTrainees();
+        List<TraineeResponseDto> getAllTrainees();
 
-    TraineeResponseDto updateTrainee(
-            Long traineeId,
-            TraineeRequestDto requestDto)
-            throws ResourceNotFoundException;
+        TraineeResponseDto updateTrainee(
+                        Long traineeId,
+                        TraineeRequestDto requestDto)
+                        throws ResourceNotFoundException;
 
-    boolean deleteTrainee(Long traineeId)
-            throws ResourceNotFoundException;
+        boolean deleteTrainee(Long traineeId)
+                        throws ResourceNotFoundException;
 
-    List<TraineeResponseDto> getTraineesByDepartment(String department);
+        List<TraineeResponseDto> getTraineesByDepartment(String department);
 
-    List<TraineeResponseDto> getTraineesByStatus(TraineeStatus status);
+        List<TraineeResponseDto> getTraineesByStatus(TraineeStatus status);
 
-    TraineeResponseDto updateTraineeStatus(
-            Long traineeId,
-            TraineeStatus status)
-            throws ResourceNotFoundException;
+        TraineeResponseDto updateTraineeStatus(
+                        Long traineeId,
+                        TraineeStatus status)
+                        throws ResourceNotFoundException;
+
+        TraineeResponseDto getMyProfile() throws ResourceNotFoundException;
 }

@@ -30,8 +30,9 @@ public class SecurityConfig {
                 return new BCryptPasswordEncoder();
         }
 
-        // DAO-based authentication provider that authenticates users using the
-        // database.
+        // Configures a DAO-based authentication provider that authenticates users
+        // by loading their details from the database using the
+        // CustomUserDetailsService.
         @Bean
         public DaoAuthenticationProvider authenticationProvider() {
 
@@ -45,6 +46,8 @@ public class SecurityConfig {
                 return provider;
         }
 
+        // Receives the authentication request and delegates it to the appropriate
+        // provider.
         @Bean
         public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
                 return config.getAuthenticationManager();
@@ -55,13 +58,42 @@ public class SecurityConfig {
 
                 http.csrf(csrf -> csrf.disable())
                                 .authenticationProvider(authenticationProvider())
-                                .authorizeHttpRequests(auth -> auth.requestMatchers("/auth/login", "/error").permitAll()
+                                .authorizeHttpRequests(auth -> auth
+
+                                                // Public APIs
+                                                .requestMatchers(
+                                                                "/auth/login",
+                                                                "/auth/setup-admin",
+                                                                "/auth/refresh-token",
+                                                                "/error")
+                                                .permitAll()
+
+                                                // Specific trainer endpoint first
+                                                .requestMatchers("/trainers/my-trainees").hasRole("TRAINER")
+
+                                                // Admin only
+                                                .requestMatchers("/users/**").hasRole("ADMIN")
+                                                .requestMatchers("/courses/**").hasRole("ADMIN")
+                                                .requestMatchers("/batches/**").hasRole("ADMIN")
+                                                .requestMatchers("/enrollments/**").hasRole("ADMIN")
+
+                                                // Admin + Trainer
+                                                .requestMatchers("/sessions/**").hasAnyRole("ADMIN", "TRAINER")
+                                                .requestMatchers("/attendance/**").hasAnyRole("ADMIN", "TRAINER")
+
+                                                // Trainer profile APIs
+                                                .requestMatchers("/trainers/**").hasRole("ADMIN")
+
+                                                // Trainee profile APIs
+                                                .requestMatchers("/trainees/me").hasRole("TRAINEE")
+                                                .requestMatchers("/trainees/**").hasRole("ADMIN")
+
                                                 .anyRequest().authenticated())
                                 .sessionManagement(session -> session
                                                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
                                 .formLogin(form -> form.disable())
-                                .httpBasic(httpBasics -> httpBasics.disable());
+                                .httpBasic(httpBasic -> httpBasic.disable());
 
                 return http.build();
         }

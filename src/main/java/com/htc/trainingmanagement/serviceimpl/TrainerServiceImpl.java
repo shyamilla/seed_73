@@ -2,13 +2,17 @@ package com.htc.trainingmanagement.serviceimpl;
 
 import java.util.List;
 
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import com.htc.trainingmanagement.dto.request.TrainerRequestDto;
 import com.htc.trainingmanagement.dto.response.TrainerResponseDto;
+import com.htc.trainingmanagement.dto.response.TrainerTraineeResponseDto;
 import com.htc.trainingmanagement.entity.Trainer;
 import com.htc.trainingmanagement.exception.ResourceNotFoundException;
 import com.htc.trainingmanagement.mapper.TrainerMapper;
+import com.htc.trainingmanagement.mapper.TrainerTraineeMapper;
+import com.htc.trainingmanagement.repository.EnrollmentRepository;
 import com.htc.trainingmanagement.repository.TrainerRepository;
 import com.htc.trainingmanagement.service.TrainerService;
 
@@ -20,6 +24,10 @@ public class TrainerServiceImpl implements TrainerService {
 
     private final TrainerRepository trainerRepository;
     private final TrainerMapper trainerMapper;
+
+    private final EnrollmentRepository enrollmentRepository;
+
+private final TrainerTraineeMapper trainerTraineeMapper;
 
     @Override
     public TrainerResponseDto getTrainerById(Long trainerId)
@@ -106,4 +114,26 @@ public class TrainerServiceImpl implements TrainerService {
                 .orElseThrow(() -> new ResourceNotFoundException(
                         "Trainer not found with id: " + trainerId));
     }
+
+
+    @Override
+public List<TrainerTraineeResponseDto> getMyTrainees() throws ResourceNotFoundException {
+
+    String email = SecurityContextHolder
+            .getContext()
+            .getAuthentication()
+            .getName();
+
+    Trainer trainer = trainerRepository
+            .findByUserEmail(email)
+            .orElseThrow(() ->
+                    new ResourceNotFoundException(
+                            "Trainer not found"));
+
+    return enrollmentRepository
+            .findByTrainerId(trainer.getTrainerId())
+            .stream()
+            .map(trainerTraineeMapper::toResponseDto)
+            .toList();
+}
 }

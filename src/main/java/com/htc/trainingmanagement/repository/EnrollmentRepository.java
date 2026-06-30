@@ -3,6 +3,7 @@ package com.htc.trainingmanagement.repository;
 import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 
 import com.htc.trainingmanagement.entity.Enrollment;
 import com.htc.trainingmanagement.entity.Trainee;
@@ -20,4 +21,11 @@ public interface EnrollmentRepository extends JpaRepository<Enrollment, Long> {
         List<Enrollment> findByTraineeTraineeId(Long traineeId);
 
         List<Enrollment> findByTrainingBatchTrainingbatchId(Long trainingBatchId);
+
+        @Query("""
+                        SELECT e
+                        FROM Enrollment e
+                        WHERE e.trainingBatch.trainer.trainerId = :trainerId
+                        """)
+        List<Enrollment> findByTrainerId(Long trainerId);
 }

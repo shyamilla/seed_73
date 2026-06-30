@@ -1,6 +1,7 @@
 package com.htc.trainingmanagement.repository;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
@@ -15,4 +16,6 @@ public interface TraineeRepository extends JpaRepository<Trainee, Long> {
     List<Trainee> findByDepartmentIgnoreCase(String department);
 
     List<Trainee> findByStatus(TraineeStatus status);
+
+    Optional<Trainee> findByUserEmail(String email);
 }

@@ -2,6 +2,7 @@ package com.htc.trainingmanagement.serviceimpl;
 
 import java.util.List;
 
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import com.htc.trainingmanagement.dto.request.TraineeRequestDto;
@@ -106,5 +107,20 @@ public class TraineeServiceImpl implements TraineeService {
                 return traineeRepository.findById(traineeId)
                                 .orElseThrow(() -> new ResourceNotFoundException(
                                                 "Trainee not found with id: " + traineeId));
+        }
+
+        @Override
+        public TraineeResponseDto getMyProfile() throws ResourceNotFoundException {
+
+                String email = SecurityContextHolder
+                                .getContext()
+                                .getAuthentication()
+                                .getName();
+
+                Trainee trainee = traineeRepository.findByUserEmail(email)
+                                .orElseThrow(() -> new ResourceNotFoundException(
+                                                "Trainee profile not found"));
+
+                return traineeMapper.toResponseDto(trainee);
         }
 }

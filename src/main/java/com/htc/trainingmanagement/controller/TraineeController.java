@@ -89,4 +89,10 @@ public class TraineeController {
                 return ResponseEntity.ok(
                                 traineeService.updateTraineeStatus(traineeId, status));
         }
+
+        @GetMapping("/me")
+        public ResponseEntity<TraineeResponseDto> getMyProfile() throws ResourceNotFoundException {
+
+                return ResponseEntity.ok(traineeService.getMyProfile());
+        }
 }

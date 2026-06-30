@@ -12,13 +12,15 @@ import com.htc.trainingmanagement.entity.User;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
+// Represents the logged-in user in Spring Security format
 public class CustomUserDetails implements UserDetails {
 
     private final User user;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        // Convert my application's roles into Spring Security authorities so that Spring can decide what the user is allowed to access.
+        // Convert my application's roles into Spring Security authorities so that
+        // Spring can decide what the user is allowed to access.
         return user.getRoles()
                 .stream()
                 .map(role -> new SimpleGrantedAuthority(
@@ -33,43 +35,7 @@ public class CustomUserDetails implements UserDetails {
 
     @Override
     public String getUsername() {
-        return user.getEmail(); // login using email
+        return user.getEmail(); // login using email cause in using email  + password
     }
 
-    @Override
-    public boolean isAccountNonExpired() {
-        return true;
-    }
-
-    @Override
-    public boolean isAccountNonLocked() {
-        return true;
-    }
-
-    @Override
-    public boolean isCredentialsNonExpired() {
-        return true;
-    }
-
-    @Override
-    public boolean isEnabled() {
-        return true;
-        // or return user.getIsActive();
-    }
-
-    public Long getUserId() {
-        return user.getUserId();
-    }
-
-    public String getName() {
-        return user.getUserName();
-    }
-
-    public String getEmail() {
-        return user.getEmail();
-    }
-
-    public User getUser() {
-        return user;
-    }
 }
