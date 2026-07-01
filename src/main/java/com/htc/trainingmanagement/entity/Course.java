@@ -1,5 +1,7 @@
 package com.htc.trainingmanagement.entity;
 
+import org.hibernate.annotations.SQLDelete;
+
 import com.htc.trainingmanagement.enums.CourseStatus;
 
 import jakarta.persistence.Column;
@@ -23,6 +25,7 @@ import lombok.ToString;
 @NoArgsConstructor
 @ToString
 @Table(name = "665_course")
+@SQLDelete(sql = "UPDATE 665_course SET is_active = false WHERE course_id = ?")
 public class Course extends BaseEntity {
 
     @Id

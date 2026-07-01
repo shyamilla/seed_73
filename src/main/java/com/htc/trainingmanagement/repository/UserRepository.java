@@ -16,6 +16,10 @@ public interface UserRepository extends JpaRepository<User, Long> {
     // Finds all users having the given role.
     List<User> findByRolesContaining(Role role);
 
-    // used for security 
+    // used for security
     Optional<User> findByEmail(String email);
+
+    List<User> findByIsActiveFalse();
+
+    List<User> findByIsActiveTrue();
 }

@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 
 import com.htc.trainingmanagement.dto.request.CourseRequestDto;
+import com.htc.trainingmanagement.dto.response.CourseAdminResponseDto;
 import com.htc.trainingmanagement.dto.response.CourseResponseDto;
 import com.htc.trainingmanagement.entity.Course;
 import com.htc.trainingmanagement.enums.CourseStatus;
@@ -150,5 +151,13 @@ public class CourseServiceImpl implements CourseService {
                 return courseRepository.findById(courseId)
                                 .orElseThrow(() -> new ResourceNotFoundException(
                                                 "Course not found with id: " + courseId));
+        }
+
+        public CourseAdminResponseDto getCourseAdminById(Long courseId) throws ResourceNotFoundException {
+
+                Course course = courseRepository.findById(courseId)
+                                .orElseThrow(() -> new ResourceNotFoundException("Course not found"));
+
+                return courseMapper.toAdminResponseDto(course);
         }
 }

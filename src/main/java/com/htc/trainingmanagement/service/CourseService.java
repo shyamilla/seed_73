@@ -3,6 +3,7 @@ package com.htc.trainingmanagement.service;
 import java.util.List;
 
 import com.htc.trainingmanagement.dto.request.CourseRequestDto;
+import com.htc.trainingmanagement.dto.response.CourseAdminResponseDto;
 import com.htc.trainingmanagement.dto.response.CourseResponseDto;
 import com.htc.trainingmanagement.enums.CourseStatus;
 import com.htc.trainingmanagement.exception.DuplicateResourceException;
@@ -33,4 +34,6 @@ public interface CourseService {
 
     CourseResponseDto updateCourseStatus(Long courseId, CourseStatus status)
             throws ResourceNotFoundException;
+
+    CourseAdminResponseDto getCourseAdminById(Long id) throws ResourceNotFoundException;
 }

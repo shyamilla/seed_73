@@ -29,9 +29,11 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             HttpServletResponse response,
             FilterChain filterChain)
             throws ServletException, IOException {
-        // TODO Auto-generated method stub
+
+        // Read the JWT from the Authorization header
         String authHeader = request.getHeader("Authorization");
 
+        // Skip JWT validation if no Bearer token is present
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
             filterChain.doFilter(request, response);
             return;
@@ -39,22 +41,26 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         String token = authHeader.substring(7);
 
+        // Extract the user's email from the token
         String email = jwtService.extractUserName(token);
 
         if (email != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+
+            // Load user details from the database
             UserDetails userDetails = userDetailsService.loadUserByUsername(email);
 
+            // Authenticate the user only if the token is valid
             if (jwtService.isTokenValid(token, userDetails)) {
-                UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(userDetails, null,
-                        userDetails.getAuthorities());
+                UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(
+                        userDetails, null, userDetails.getAuthorities());
 
                 auth.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
 
                 SecurityContextHolder.getContext().setAuthentication(auth);
             }
-
         }
 
+        // Continue processing the request
         filterChain.doFilter(request, response);
     }
 

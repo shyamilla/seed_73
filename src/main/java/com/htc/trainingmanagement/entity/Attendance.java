@@ -19,7 +19,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
-
+import org.hibernate.annotations.SQLDelete;
 @Entity
 @Setter
 @Getter
@@ -27,6 +27,9 @@ import lombok.ToString;
 @NoArgsConstructor
 @ToString(exclude = {"trainee", "session"})
 @Table(name = "655_attendance")
+// Soft deletes the record by setting is_active to false
+@SQLDelete(sql = "UPDATE 655_attendance SET is_active = false WHERE attendance_id = ?")
+
 public class Attendance extends BaseEntity {
 
     @Id

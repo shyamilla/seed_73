@@ -20,7 +20,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
-
+import org.hibernate.annotations.SQLDelete;
 @Entity
 @Setter
 @Getter
@@ -28,6 +28,8 @@ import lombok.ToString;
 @NoArgsConstructor
 @ToString(exclude = "trainingBatch")
 @Table(name = "655_session")
+@SQLDelete(sql = "UPDATE 655_session SET is_active = false WHERE session_id = ?")
+
 public class Session extends BaseEntity {
 
     @Id

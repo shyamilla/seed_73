@@ -19,7 +19,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
-
+import org.hibernate.annotations.SQLDelete;
 @Entity
 @Setter
 @Getter
@@ -27,6 +27,7 @@ import lombok.ToString;
 @NoArgsConstructor
 @ToString(exclude = { "course", "trainer" })
 @Table(name = "665_training_batch")
+@SQLDelete(sql = "UPDATE 665_training_batch SET is_active = false WHERE trainingbatch_id = ?")
 public class TrainingBatch extends BaseEntity {
 
     @Id

@@ -123,4 +123,22 @@ public class TraineeServiceImpl implements TraineeService {
 
                 return traineeMapper.toResponseDto(trainee);
         }
+
+        @Override
+        public List<TraineeResponseDto> getInactiveTrainees() {
+
+                return traineeRepository.findByIsActiveFalse()
+                                .stream()
+                                .map(traineeMapper::toResponseDto)
+                                .toList();
+        }
+
+        @Override
+        public List<TraineeResponseDto> getActiveTrainees() {
+
+                return traineeRepository.findByIsActiveTrue()
+                                .stream()
+                                .map(traineeMapper::toResponseDto)
+                                .toList();
+        }
 }

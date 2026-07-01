@@ -245,4 +245,22 @@ public class UserServiceImpl implements UserService {
                 }
         }
 
+        @Override
+        public List<UserResponseDto> getInactiveUsers() {
+
+                return userRepository.findByIsActiveFalse()
+                                .stream()
+                                .map(userMapper::toResponse)
+                                .toList();
+        }
+
+        @Override
+        public List<UserResponseDto> getActiveUsers() {
+
+                return userRepository.findByIsActiveTrue()
+                                .stream()
+                                .map(userMapper::toResponse)
+                                .toList();
+        }
+
 }

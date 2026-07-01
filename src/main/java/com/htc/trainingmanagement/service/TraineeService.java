@@ -32,4 +32,8 @@ public interface TraineeService {
                         throws ResourceNotFoundException;
 
         TraineeResponseDto getMyProfile() throws ResourceNotFoundException;
+
+        List<TraineeResponseDto> getInactiveTrainees();
+
+        List<TraineeResponseDto> getActiveTrainees();
 }

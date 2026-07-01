@@ -98,4 +98,18 @@ public class TrainerController {
                 return ResponseEntity.ok(
                                 trainerService.getMyTrainees());
         }
+
+        @GetMapping("/inactive")
+        public ResponseEntity<List<TrainerResponseDto>> getInactiveTrainers() {
+
+                return ResponseEntity.ok(
+                                trainerService.getInactiveTrainers());
+        }
+
+        @GetMapping("/active")
+        public ResponseEntity<List<TrainerResponseDto>> getActiveTrainers() {
+
+                return ResponseEntity.ok(
+                                trainerService.getActiveTrainers());
+        }
 }

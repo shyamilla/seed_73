@@ -114,4 +114,18 @@ public class UserController {
                 return ResponseEntity.ok(
                                 userService.changePassword(userId, newPassword));
         }
+
+        @GetMapping("/inactive")
+        public ResponseEntity<List<UserResponseDto>> getInactiveUsers() {
+
+                return ResponseEntity.ok(
+                                userService.getInactiveUsers());
+        }
+
+        @GetMapping("/active")
+        public ResponseEntity<List<UserResponseDto>> getActiveUsers() {
+
+                return ResponseEntity.ok(
+                                userService.getActiveUsers());
+        }
 }

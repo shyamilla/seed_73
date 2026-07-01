@@ -27,7 +27,7 @@ public class TrainerServiceImpl implements TrainerService {
 
     private final EnrollmentRepository enrollmentRepository;
 
-private final TrainerTraineeMapper trainerTraineeMapper;
+    private final TrainerTraineeMapper trainerTraineeMapper;
 
     @Override
     public TrainerResponseDto getTrainerById(Long trainerId)
@@ -115,25 +115,41 @@ private final TrainerTraineeMapper trainerTraineeMapper;
                         "Trainer not found with id: " + trainerId));
     }
 
+    @Override
+    public List<TrainerTraineeResponseDto> getMyTrainees() throws ResourceNotFoundException {
+
+        String email = SecurityContextHolder
+                .getContext()
+                .getAuthentication()
+                .getName();
+
+        Trainer trainer = trainerRepository
+                .findByUserEmail(email)
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        "Trainer not found"));
+
+        return enrollmentRepository
+                .findByTrainerId(trainer.getTrainerId())
+                .stream()
+                .map(trainerTraineeMapper::toResponseDto)
+                .toList();
+    }
 
     @Override
-public List<TrainerTraineeResponseDto> getMyTrainees() throws ResourceNotFoundException {
+    public List<TrainerResponseDto> getInactiveTrainers() {
 
-    String email = SecurityContextHolder
-            .getContext()
-            .getAuthentication()
-            .getName();
+        return trainerRepository.findByIsActiveFalse()
+                .stream()
+                .map(trainerMapper::toResponseDto)
+                .toList();
+    }
 
-    Trainer trainer = trainerRepository
-            .findByUserEmail(email)
-            .orElseThrow(() ->
-                    new ResourceNotFoundException(
-                            "Trainer not found"));
+    @Override
+    public List<TrainerResponseDto> getActiveTrainers() {
 
-    return enrollmentRepository
-            .findByTrainerId(trainer.getTrainerId())
-            .stream()
-            .map(trainerTraineeMapper::toResponseDto)
-            .toList();
-}
+        return trainerRepository.findByIsActiveTrue()
+                .stream()
+                .map(trainerMapper::toResponseDto)
+                .toList();
+    }
 }

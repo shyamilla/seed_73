@@ -35,4 +35,8 @@ public interface UserService {
 
         UserResponseDto changePassword(Long userId, String newPassword)
                         throws ResourceNotFoundException;
+
+        List<UserResponseDto> getInactiveUsers();
+
+        List<UserResponseDto> getActiveUsers();
 }

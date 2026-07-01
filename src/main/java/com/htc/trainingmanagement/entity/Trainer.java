@@ -13,6 +13,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
+import org.hibernate.annotations.SQLDelete;
 
 @Entity
 @Setter
@@ -21,6 +22,7 @@ import lombok.ToString;
 @NoArgsConstructor
 @ToString(exclude = "user")
 @Table(name = "665_trainer")
+@SQLDelete(sql = "UPDATE 665_trainer SET is_active = false WHERE trainer_id = ?")
 public class Trainer extends BaseEntity {
 
     @Id

@@ -18,4 +18,8 @@ public interface TraineeRepository extends JpaRepository<Trainee, Long> {
     List<Trainee> findByStatus(TraineeStatus status);
 
     Optional<Trainee> findByUserEmail(String email);
+
+    List<Trainee> findByIsActiveFalse();
+
+    List<Trainee> findByIsActiveTrue();
 }

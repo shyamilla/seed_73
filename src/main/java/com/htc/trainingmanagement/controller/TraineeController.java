@@ -95,4 +95,18 @@ public class TraineeController {
 
                 return ResponseEntity.ok(traineeService.getMyProfile());
         }
+
+        @GetMapping("/inactive")
+        public ResponseEntity<List<TraineeResponseDto>> getInactiveTrainees() {
+
+                return ResponseEntity.ok(
+                                traineeService.getInactiveTrainees());
+        }
+
+        @GetMapping("/active")
+        public ResponseEntity<List<TraineeResponseDto>> getActiveTrainees() {
+
+                return ResponseEntity.ok(
+                                traineeService.getActiveTrainees());
+        }
 }

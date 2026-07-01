@@ -3,6 +3,8 @@ package com.htc.trainingmanagement.entity;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.hibernate.annotations.SQLDelete;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -26,6 +28,8 @@ import lombok.ToString;
 @NoArgsConstructor
 @ToString(exclude = "roles")
 @Table(name = "665_users")
+@SQLDelete(sql = "UPDATE 665_users SET is_active = false WHERE user_id = ?")
+
 public class User extends BaseEntity {
 
     @Id

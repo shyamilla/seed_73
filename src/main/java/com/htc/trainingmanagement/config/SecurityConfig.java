@@ -65,17 +65,20 @@ public class SecurityConfig {
                                                                 "/auth/login",
                                                                 "/auth/setup-admin",
                                                                 "/auth/refresh-token",
+                                                                "/auth/setup-roles",
+                                                                "/auth/logout",
                                                                 "/error")
                                                 .permitAll()
 
                                                 // Specific trainer endpoint first
-                                                .requestMatchers("/trainers/my-trainees").hasRole("TRAINER")
+                                                .requestMatchers("/trainers/my-trainees").hasAnyRole("ADMIN", "TRAINER")
 
                                                 // Admin only
                                                 .requestMatchers("/users/**").hasRole("ADMIN")
                                                 .requestMatchers("/courses/**").hasRole("ADMIN")
                                                 .requestMatchers("/batches/**").hasRole("ADMIN")
                                                 .requestMatchers("/enrollments/**").hasRole("ADMIN")
+                                                .requestMatchers("/courses/admin/**").hasRole("ADMIN")
 
                                                 // Admin + Trainer
                                                 .requestMatchers("/sessions/**").hasAnyRole("ADMIN", "TRAINER")

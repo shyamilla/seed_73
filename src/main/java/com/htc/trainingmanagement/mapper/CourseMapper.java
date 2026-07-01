@@ -3,6 +3,7 @@ package com.htc.trainingmanagement.mapper;
 import org.springframework.stereotype.Component;
 
 import com.htc.trainingmanagement.dto.request.CourseRequestDto;
+import com.htc.trainingmanagement.dto.response.CourseAdminResponseDto;
 import com.htc.trainingmanagement.dto.response.CourseResponseDto;
 import com.htc.trainingmanagement.entity.Course;
 
@@ -41,7 +42,23 @@ public class CourseMapper {
                 course.getMaxCapacity(),
                 course.getStatus(),
                 course.getCreatedAt(),
-                course.getUpdatedAt()
-        );
+                course.getUpdatedAt());
+    }
+
+    public CourseAdminResponseDto toAdminResponseDto(Course course) {
+
+        CourseAdminResponseDto dto = new CourseAdminResponseDto();
+
+        dto.setCourseId(course.getCourseId());
+        dto.setCourseName(course.getCourseName());
+        dto.setDescription(course.getDescription());
+        dto.setDurationInDays(course.getDurationInDays());
+        dto.setMaxCapacity(course.getMaxCapacity());
+        dto.setStatus(course.getStatus());
+
+        dto.setCreatedBy(course.getCreatedBy());
+        dto.setUpdatedBy(course.getUpdatedBy());
+
+        return dto;
     }
 }

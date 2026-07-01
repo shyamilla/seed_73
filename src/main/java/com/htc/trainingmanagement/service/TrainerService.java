@@ -30,4 +30,8 @@ public interface TrainerService {
                         throws ResourceNotFoundException;
 
         List<TrainerTraineeResponseDto> getMyTrainees() throws ResourceNotFoundException;
+
+        List<TrainerResponseDto> getInactiveTrainers();
+
+        List<TrainerResponseDto> getActiveTrainers();
 }

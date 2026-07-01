@@ -28,16 +28,16 @@ public class RefreshTokenServiceImpl implements RefreshTokenService {
     @Transactional
     public RefreshToken createRefreshToken(User user) {
 
-        refreshTokenRepository.deleteByUser(user);
+    refreshTokenRepository.deleteByUser(user);
 
-        RefreshToken refreshToken = new RefreshToken();
-        refreshToken.setUser(user);
-        refreshToken.setToken(UUID.randomUUID().toString());
-        refreshToken.setExpiryDate(
-                Instant.now().plusMillis(refreshExpiration));
+    RefreshToken refreshToken = new RefreshToken();
+    refreshToken.setUser(user);
+    refreshToken.setToken(UUID.randomUUID().toString());
+    refreshToken.setExpiryDate(
+            Instant.now().plusMillis(refreshExpiration));
 
-        return refreshTokenRepository.save(refreshToken);
-    }
+    return refreshTokenRepository.save(refreshToken);
+}
 
     @Override
     public RefreshToken verifyRefreshToken(String token) throws ResourceNotFoundException {
@@ -53,4 +53,9 @@ public class RefreshTokenServiceImpl implements RefreshTokenService {
 
         return refreshToken;
     }
+
+    @Transactional
+    public void deleteRefreshToken(String token) {
+    refreshTokenRepository.deleteByToken(token);
+}
 }

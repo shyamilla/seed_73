@@ -16,6 +16,9 @@ public interface TrainerRepository extends JpaRepository<Trainer, Long> {
 
     List<Trainer> findByYearsOfExperienceGreaterThanEqual(Integer yearsOfExperience);
 
-
     Optional<Trainer> findByUserEmail(String email);
+
+    List<Trainer> findByIsActiveFalse();
+
+    List<Trainer> findByIsActiveTrue();
 }

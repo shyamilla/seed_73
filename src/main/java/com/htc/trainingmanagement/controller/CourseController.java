@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.htc.trainingmanagement.dto.request.CourseDurationUpdateDto;
 import com.htc.trainingmanagement.dto.request.CourseRequestDto;
+import com.htc.trainingmanagement.dto.response.CourseAdminResponseDto;
 import com.htc.trainingmanagement.dto.response.CourseResponseDto;
 import com.htc.trainingmanagement.enums.CourseStatus;
 import com.htc.trainingmanagement.exception.DuplicateResourceException;
@@ -111,5 +112,12 @@ public class CourseController {
 
                 return ResponseEntity.ok(
                                 courseService.updateCourseStatus(courseId, status));
+        }
+
+        @GetMapping("/admin/{id}")
+        public ResponseEntity<CourseAdminResponseDto> getCourseAdminById(@PathVariable Long id) throws ResourceNotFoundException {
+
+                CourseAdminResponseDto response = courseService.getCourseAdminById(id);
+                return ResponseEntity.ok(response);
         }
 }

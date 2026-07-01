@@ -8,4 +8,6 @@ import com.htc.trainingmanagement.exception.ResourceNotFoundException;
 public interface AuthService {
 
     UserResponseDto setupFirstAdmin(SetupAdminRequestDto requestDto) throws DuplicateResourceException, ResourceNotFoundException;
+
+    void setupRoles();
 }
