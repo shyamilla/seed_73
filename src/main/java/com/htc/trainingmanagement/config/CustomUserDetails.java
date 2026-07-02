@@ -35,7 +35,11 @@ public class CustomUserDetails implements UserDetails {
 
     @Override
     public String getUsername() {
-        return user.getEmail(); // login using email cause in using email  + password
+        return user.getEmail(); // login using email cause in using email + password
     }
 
+    @Override
+    public boolean isEnabled() {
+        return user.getIsActive();
+    }
 }

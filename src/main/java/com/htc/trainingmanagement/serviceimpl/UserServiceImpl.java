@@ -4,9 +4,11 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import com.htc.trainingmanagement.dto.request.ChangePasswordRequestDto;
 import com.htc.trainingmanagement.dto.request.UserRequestDto;
 import com.htc.trainingmanagement.dto.response.UserResponseDto;
 import com.htc.trainingmanagement.entity.Role;
@@ -78,7 +80,7 @@ public class UserServiceImpl implements UserService {
                 userMapper.updateEntity(user, requestDto);
 
                 // Encodes the password before saving it.
-                user.setPassword(passwordEncoder.encode(requestDto.getPassword()));
+                // user.setPassword(passwordEncoder.encode(requestDto.getPassword()));
                 user.setRoles(getRoles(requestDto.getRoles()));
 
                 User updatedUser = userRepository.save(user);
@@ -205,20 +207,35 @@ public class UserServiceImpl implements UserService {
         }
 
         @Override
-        public UserResponseDto changePassword(Long userId, String newPassword)
+        public UserResponseDto changePassword(Long userId, ChangePasswordRequestDto request)
                         throws ResourceNotFoundException {
+
+                String loggedInEmail = SecurityContextHolder.getContext()
+                                .getAuthentication()
+                                .getName();
+
+                User loggedInUser = userRepository.findByEmail(loggedInEmail)
+                                .orElseThrow(() -> new ResourceNotFoundException(
+                                                "Logged-in user not found"));
+
+                if (!loggedInUser.getUserId().equals(userId)) {
+                        throw new IllegalArgumentException(
+                                        "You can change only your own password.");
+                }
 
                 User user = userRepository.findById(userId)
                                 .orElseThrow(() -> new ResourceNotFoundException(
                                                 "User not found with ID: " + userId));
 
-                user.setPassword(passwordEncoder.encode(newPassword));
+                if (passwordEncoder.matches(request.getNewPassword(), user.getPassword())) {
+                        throw new IllegalArgumentException(
+                                        "New password cannot be the same as current password.");
+                }
 
-                User updatedUser = userRepository.save(user);
+                user.setPassword(passwordEncoder.encode(request.getNewPassword()));
 
-                return userMapper.toResponse(updatedUser);
+                return userMapper.toResponse(userRepository.save(user));
         }
-
         // helper
 
         private void createProfiles(User user) {

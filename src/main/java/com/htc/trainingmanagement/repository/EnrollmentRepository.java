@@ -28,4 +28,8 @@ public interface EnrollmentRepository extends JpaRepository<Enrollment, Long> {
                         WHERE e.trainingBatch.trainer.trainerId = :trainerId
                         """)
         List<Enrollment> findByTrainerId(Long trainerId);
+
+        List<Enrollment> findByTrainee(Trainee trainee);
+
+        boolean existsByTrainingBatch(TrainingBatch trainingBatch);
 }

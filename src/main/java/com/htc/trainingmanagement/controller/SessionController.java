@@ -37,9 +37,7 @@ public class SessionController {
         public ResponseEntity<SessionResponseDto> addSession(
                         @Valid @RequestBody SessionRequestDto requestDto)
                         throws ResourceNotFoundException {
-
-                return ResponseEntity.status(HttpStatus.CREATED)
-                                .body(sessionService.createSession(requestDto));
+                return ResponseEntity.status(HttpStatus.CREATED).body(sessionService.createSession(requestDto));
         }
 
         @PutMapping("/update/{sessionId}")
@@ -47,51 +45,40 @@ public class SessionController {
                         @PathVariable Long sessionId,
                         @Valid @RequestBody SessionRequestDto requestDto)
                         throws ResourceNotFoundException {
-
-                return ResponseEntity.ok(
-                                sessionService.updateSession(sessionId, requestDto));
+                return ResponseEntity.status(HttpStatus.OK).body(sessionService.updateSession(sessionId, requestDto));
+                                
         }
 
         @GetMapping("/find/{sessionId}")
         public ResponseEntity<SessionResponseDto> getSessionById(
                         @PathVariable Long sessionId)
                         throws ResourceNotFoundException {
-
-                return ResponseEntity.ok(
-                                sessionService.getSessionById(sessionId));
+                return ResponseEntity.status(HttpStatus.OK).body(sessionService.getSessionById(sessionId));
         }
 
         @GetMapping("/all")
         public ResponseEntity<List<SessionResponseDto>> getAllSessions() {
-
-                return ResponseEntity.ok(
-                                sessionService.getAllSessions());
+                return ResponseEntity.status(HttpStatus.OK).body(sessionService.getAllSessions());
         }
 
         @DeleteMapping("/delete/{sessionId}")
         public ResponseEntity<Boolean> deleteSession(
                         @PathVariable Long sessionId)
                         throws ResourceNotFoundException {
-
-                return ResponseEntity.ok(
-                                sessionService.deleteSession(sessionId));
+                return ResponseEntity.status(HttpStatus.OK).body(sessionService.deleteSession(sessionId));
         }
 
         @GetMapping("/batch/{trainingBatchId}")
         public ResponseEntity<List<SessionResponseDto>> getSessionsByBatch(
                         @PathVariable Long trainingBatchId)
                         throws ResourceNotFoundException {
-
-                return ResponseEntity.ok(
-                                sessionService.getSessionsByBatch(trainingBatchId));
+                return ResponseEntity.status(HttpStatus.OK).body(sessionService.getSessionsByBatch(trainingBatchId));
         }
 
         @GetMapping("/date")
         public ResponseEntity<List<SessionResponseDto>> getSessionsByDate(
                         @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate sessionDate) {
-
-                return ResponseEntity.ok(
-                                sessionService.getSessionsByDate(sessionDate));
+                return ResponseEntity.status(HttpStatus.OK).body(sessionService.getSessionsByDate(sessionDate));
         }
 
         @PatchMapping("/{sessionId}/status")
@@ -99,8 +86,7 @@ public class SessionController {
                         @PathVariable Long sessionId,
                         @RequestParam SessionStatus status)
                         throws ResourceNotFoundException {
-
-                return ResponseEntity.ok(
-                                sessionService.updateSessionStatus(sessionId, status));
+                return ResponseEntity.status(HttpStatus.OK).body(sessionService.updateSessionStatus(sessionId, status));
         }
+
 }

@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import com.htc.trainingmanagement.entity.Course;
 import com.htc.trainingmanagement.entity.TrainingBatch;
 import com.htc.trainingmanagement.enums.BatchStatus;
 
@@ -14,4 +15,10 @@ public interface TrainingBatchRepository extends JpaRepository<TrainingBatch, Lo
     List<TrainingBatch> findByTrainerTrainerId(Long trainerId);
 
     List<TrainingBatch> findByStatus(BatchStatus status);
+
+    boolean existsByCourseCourseId(Long courseId);
+
+    boolean existsByCourseAndStatus(Course course, BatchStatus status);
+
+   
 }

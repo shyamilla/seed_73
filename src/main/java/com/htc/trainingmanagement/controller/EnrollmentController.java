@@ -37,9 +37,7 @@ public class EnrollmentController {
         public ResponseEntity<EnrollmentResponseDto> addEnrollment(
                         @Valid @RequestBody EnrollmentRequestDto requestDto)
                         throws ResourceNotFoundException, EnrollmentException, CapacityExceededException {
-
-                return ResponseEntity.status(HttpStatus.CREATED)
-                                .body(enrollmentService.createEnrollment(requestDto));
+                return ResponseEntity.status(HttpStatus.CREATED).body(enrollmentService.createEnrollment(requestDto));
         }
 
         @PutMapping("/update/{enrollmentId}")
@@ -47,51 +45,41 @@ public class EnrollmentController {
                         @PathVariable Long enrollmentId,
                         @Valid @RequestBody EnrollmentRequestDto requestDto)
                         throws ResourceNotFoundException, EnrollmentException, CapacityExceededException {
-
-                return ResponseEntity.ok(
-                                enrollmentService.updateEnrollment(enrollmentId, requestDto));
+                return ResponseEntity.status(HttpStatus.OK).body(enrollmentService.updateEnrollment(enrollmentId, requestDto));
         }
 
         @GetMapping("/find/{enrollmentId}")
         public ResponseEntity<EnrollmentResponseDto> getEnrollmentById(
                         @PathVariable Long enrollmentId)
                         throws ResourceNotFoundException {
-
-                return ResponseEntity.ok(
-                                enrollmentService.getEnrollmentById(enrollmentId));
+                return ResponseEntity.status(HttpStatus.OK).body(enrollmentService.getEnrollmentById(enrollmentId));
         }
 
         @GetMapping("/all")
         public ResponseEntity<List<EnrollmentResponseDto>> getAllEnrollments() {
-
-                return ResponseEntity.ok(enrollmentService.getAllEnrollments());
+                return ResponseEntity.status(HttpStatus.OK).body(enrollmentService.getAllEnrollments());
         }
 
         @DeleteMapping("/delete/{enrollmentId}")
         public ResponseEntity<Boolean> deleteEnrollment(
                         @PathVariable Long enrollmentId)
                         throws ResourceNotFoundException {
-
-                return ResponseEntity.ok(
-                                enrollmentService.deleteEnrollment(enrollmentId));
+                return ResponseEntity.status(HttpStatus.OK).body(enrollmentService.deleteEnrollment(enrollmentId));
         }
 
         @GetMapping("/trainee/{traineeId}")
         public ResponseEntity<List<EnrollmentResponseDto>> getEnrollmentsByTrainee(
                         @PathVariable Long traineeId)
                         throws ResourceNotFoundException {
-
-                return ResponseEntity.ok(
-                                enrollmentService.getEnrollmentsByTrainee(traineeId));
+                return ResponseEntity.status(HttpStatus.OK).body(enrollmentService.getEnrollmentsByTrainee(traineeId));
         }
 
         @GetMapping("/batch/{trainingBatchId}")
         public ResponseEntity<List<EnrollmentResponseDto>> getEnrollmentsByBatch(
                         @PathVariable Long trainingBatchId)
                         throws ResourceNotFoundException {
-
-                return ResponseEntity.ok(
-                                enrollmentService.getEnrollmentsByBatch(trainingBatchId));
+                return ResponseEntity.status(HttpStatus.OK).body(enrollmentService.getEnrollmentsByBatch(trainingBatchId));
+                                
         }
 
         @PatchMapping("/{enrollmentId}/status")
@@ -99,10 +87,6 @@ public class EnrollmentController {
                         @PathVariable Long enrollmentId,
                         @RequestParam EnrollmentStatus completionStatus)
                         throws ResourceNotFoundException {
-
-                return ResponseEntity.ok(
-                                enrollmentService.updateCompletionStatus(
-                                                enrollmentId,
-                                                completionStatus));
+                return ResponseEntity.status(HttpStatus.OK).body(enrollmentService.updateCompletionStatus(enrollmentId, completionStatus));
         }
 }

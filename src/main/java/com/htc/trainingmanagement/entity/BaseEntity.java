@@ -18,34 +18,38 @@ import lombok.Setter;
 @Getter
 @Setter
 @MappedSuperclass
-// Enables automatic auditing for all entities extending this class
+// Makes this class a parent entity whose fields are inherited by all entities
+// Enables automatic auditing (created/updated timestamps and users)
 @EntityListeners(AuditingEntityListener.class)
 public abstract class BaseEntity {
 
     @CreatedDate
-    // Automatically stores the creation timestamp
+    // Automatically stores the record creation timestamp
     @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
     @LastModifiedDate
-    // Automatically updates the last modified timestamp
+    // Automatically updates the record modification timestamp
     @Column(nullable = false)
     private LocalDateTime updatedAt;
 
     @CreatedBy
-    // Stores the user who created the record
+    // Stores the username of the user who created the record
     @Column(nullable = false, updatable = false)
     private String createdBy;
 
     @LastModifiedBy
-    // Stores the user who last updated the record
+    // Stores the username of the user who last modified the record
     @Column(nullable = false)
     private String updatedBy;
 
+    // Indicates whether the record is active (used for soft delete)
+    // Default is true so every newly created record is active
     @Column(name = "is_active", nullable = false)
     private Boolean isActive = true;
 
-    @PrePersist 
+    @PrePersist
+    // Ensures isActive is true before inserting if no value is provided
     public void prePersist() {
         if (isActive == null) {
             isActive = true;

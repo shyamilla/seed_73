@@ -2,6 +2,7 @@ package com.htc.trainingmanagement.service;
 
 import java.util.List;
 
+import com.htc.trainingmanagement.dto.request.ChangePasswordRequestDto;
 import com.htc.trainingmanagement.dto.request.UserRequestDto;
 import com.htc.trainingmanagement.dto.response.UserResponseDto;
 import com.htc.trainingmanagement.enums.RoleName;
@@ -33,8 +34,8 @@ public interface UserService {
         UserResponseDto removeRole(Long userId, RoleName roleName)
                         throws ResourceNotFoundException;
 
-        UserResponseDto changePassword(Long userId, String newPassword)
-                        throws ResourceNotFoundException;
+        UserResponseDto changePassword(Long userId,  ChangePasswordRequestDto request)
+                        throws ResourceNotFoundException, Exception;
 
         List<UserResponseDto> getInactiveUsers();
 

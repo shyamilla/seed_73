@@ -6,34 +6,36 @@ import com.htc.trainingmanagement.dto.request.CourseRequestDto;
 import com.htc.trainingmanagement.dto.response.CourseAdminResponseDto;
 import com.htc.trainingmanagement.dto.response.CourseResponseDto;
 import com.htc.trainingmanagement.enums.CourseStatus;
+import com.htc.trainingmanagement.exception.CourseException;
 import com.htc.trainingmanagement.exception.DuplicateResourceException;
 import com.htc.trainingmanagement.exception.ResourceNotFoundException;
 
 public interface CourseService {
 
-    CourseResponseDto createCourse(CourseRequestDto requestDto)
-            throws DuplicateResourceException;
+        CourseResponseDto createCourse(CourseRequestDto requestDto)
+                        throws DuplicateResourceException;
 
-    CourseResponseDto getCourseById(Long courseId)
-            throws ResourceNotFoundException;
+        CourseResponseDto getCourseById(Long courseId)
+                        throws ResourceNotFoundException;
 
-    List<CourseResponseDto> getAllCourses();
+        List<CourseResponseDto> getAllCourses();
 
-    CourseResponseDto updateCourse(Long courseId, CourseRequestDto requestDto)
-            throws ResourceNotFoundException, DuplicateResourceException;
+        CourseResponseDto updateCourse(Long courseId, CourseRequestDto requestDto)
+                        throws ResourceNotFoundException, DuplicateResourceException, CourseException;
 
-    boolean deleteCourse(Long courseId)
-            throws ResourceNotFoundException;
+        boolean deleteCourse(Long courseId)
+                        throws ResourceNotFoundException, CourseException;
 
-    List<CourseResponseDto> searchCoursesByName(String courseName);
+        // other
+        List<CourseResponseDto> searchCoursesByName(String courseName);
 
-    List<CourseResponseDto> getActiveCourses();
+        List<CourseResponseDto> getActiveCourses();
 
-    CourseResponseDto updateCourseDuration(Long courseId, Integer duration)
-            throws ResourceNotFoundException;
+        CourseResponseDto updateCourseDuration(Long courseId, Integer duration)
+                        throws ResourceNotFoundException;
 
-    CourseResponseDto updateCourseStatus(Long courseId, CourseStatus status)
-            throws ResourceNotFoundException;
+        CourseResponseDto updateCourseStatus(Long courseId, CourseStatus status)
+                        throws ResourceNotFoundException;
 
-    CourseAdminResponseDto getCourseAdminById(Long id) throws ResourceNotFoundException;
+        CourseAdminResponseDto getCourseAdminById(Long id) throws ResourceNotFoundException;
 }

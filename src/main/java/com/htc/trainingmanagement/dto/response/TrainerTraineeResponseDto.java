@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class TrainerTraineeResponseDto {
-
+// return trainee information to the logged-in trainer.
     private Long traineeId;
 
     private String traineeName;

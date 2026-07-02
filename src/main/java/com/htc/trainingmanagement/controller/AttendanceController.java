@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -20,6 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.htc.trainingmanagement.dto.request.AttendanceRequestDto;
 import com.htc.trainingmanagement.dto.response.AttendanceResponseDto;
 import com.htc.trainingmanagement.enums.AttendanceStatus;
+import com.htc.trainingmanagement.exception.AttendanceException;
 import com.htc.trainingmanagement.exception.DuplicateResourceException;
 import com.htc.trainingmanagement.exception.ResourceNotFoundException;
 import com.htc.trainingmanagement.service.AttendanceService;
@@ -37,8 +39,7 @@ public class AttendanceController {
     @PostMapping("/add")
     public ResponseEntity<AttendanceResponseDto> addAttendance(
             @Valid @RequestBody AttendanceRequestDto requestDto)
-            throws ResourceNotFoundException, DuplicateResourceException {
-
+            throws ResourceNotFoundException, DuplicateResourceException, AttendanceException {
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(attendanceService.createAttendance(requestDto));
     }
@@ -47,58 +48,48 @@ public class AttendanceController {
     public ResponseEntity<AttendanceResponseDto> getAttendanceById(
             @PathVariable Long attendanceId)
             throws ResourceNotFoundException {
-
-        return ResponseEntity.ok(attendanceService.getAttendanceById(attendanceId));
+        return ResponseEntity.status(HttpStatus.OK).body(attendanceService.getAttendanceById(attendanceId));
     }
 
     @GetMapping("/all")
     public ResponseEntity<List<AttendanceResponseDto>> getAllAttendances() {
-
-        return ResponseEntity.ok(attendanceService.getAllAttendances());
+        return ResponseEntity.status(HttpStatus.OK).body(attendanceService.getAllAttendances());
     }
 
     @PutMapping("/update/{attendanceId}")
     public ResponseEntity<AttendanceResponseDto> updateAttendance(
             @PathVariable Long attendanceId,
             @Valid @RequestBody AttendanceRequestDto requestDto)
-            throws ResourceNotFoundException, DuplicateResourceException {
+            throws ResourceNotFoundException, DuplicateResourceException, AttendanceException {
 
-        return ResponseEntity.ok(
-                attendanceService.updateAttendance(attendanceId, requestDto));
+        return ResponseEntity.status(HttpStatus.OK).body(attendanceService.updateAttendance(attendanceId, requestDto));
     }
 
     @DeleteMapping("/delete/{attendanceId}")
     public ResponseEntity<Boolean> deleteAttendance(
             @PathVariable Long attendanceId)
             throws ResourceNotFoundException {
-
-        return ResponseEntity.ok(attendanceService.deleteAttendance(attendanceId));
+        return ResponseEntity.status(HttpStatus.OK).body(attendanceService.deleteAttendance(attendanceId));
     }
 
     @GetMapping("/trainee/{traineeId}")
     public ResponseEntity<List<AttendanceResponseDto>> getAttendanceByTrainee(
             @PathVariable Long traineeId)
             throws ResourceNotFoundException {
-
-        return ResponseEntity.ok(
-                attendanceService.getAttendanceByTrainee(traineeId));
+        return ResponseEntity.status(HttpStatus.OK).body(attendanceService.getAttendanceByTrainee(traineeId));
     }
 
     @GetMapping("/session/{sessionId}")
     public ResponseEntity<List<AttendanceResponseDto>> getAttendanceBySession(
             @PathVariable Long sessionId)
             throws ResourceNotFoundException {
-
-        return ResponseEntity.ok(
-                attendanceService.getAttendanceBySession(sessionId));
+        return ResponseEntity.status(HttpStatus.OK).body(attendanceService.getAttendanceBySession(sessionId));
     }
 
     @GetMapping("/date")
     public ResponseEntity<List<AttendanceResponseDto>> getAttendanceByDate(
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate attendanceDate) {
-
-        return ResponseEntity.ok(
-                attendanceService.getAttendanceByDate(attendanceDate));
+        return ResponseEntity.status(HttpStatus.OK).body(attendanceService.getAttendanceByDate(attendanceDate));
     }
 
     @PatchMapping("/{attendanceId}/status")
@@ -106,8 +97,7 @@ public class AttendanceController {
             @PathVariable Long attendanceId,
             @RequestParam AttendanceStatus attendanceStatus)
             throws ResourceNotFoundException {
-
-        return ResponseEntity.ok(
-                attendanceService.updateAttendanceStatus(attendanceId, attendanceStatus));
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(attendanceService.updateAttendanceStatus(attendanceId, attendanceStatus));
     }
 }

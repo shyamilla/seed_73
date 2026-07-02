@@ -22,6 +22,7 @@ public interface TraineeService {
         boolean deleteTrainee(Long traineeId)
                         throws ResourceNotFoundException;
 
+        // other
         List<TraineeResponseDto> getTraineesByDepartment(String department);
 
         List<TraineeResponseDto> getTraineesByStatus(TraineeStatus status);

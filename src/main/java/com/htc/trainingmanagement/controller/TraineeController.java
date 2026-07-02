@@ -2,6 +2,7 @@ package com.htc.trainingmanagement.controller;
 
 import java.util.List;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -34,42 +35,33 @@ public class TraineeController {
                         @PathVariable Long traineeId,
                         @Valid @RequestBody TraineeRequestDto requestDto)
                         throws ResourceNotFoundException {
-
-                return ResponseEntity.ok(
-                                traineeService.updateTrainee(traineeId, requestDto));
+                return ResponseEntity.status(HttpStatus.OK).body(traineeService.updateTrainee(traineeId, requestDto));
         }
 
         @GetMapping("/find/{traineeId}")
         public ResponseEntity<TraineeResponseDto> getTraineeById(
                         @PathVariable Long traineeId)
                         throws ResourceNotFoundException {
-
-                return ResponseEntity.ok(
-                                traineeService.getTraineeById(traineeId));
+                return ResponseEntity.status(HttpStatus.OK).body( traineeService.getTraineeById(traineeId));
         }
 
         @GetMapping("/all")
         public ResponseEntity<List<TraineeResponseDto>> getAllTrainees() {
-
-                return ResponseEntity.ok(
-                                traineeService.getAllTrainees());
+                return ResponseEntity.status(HttpStatus.OK).body(traineeService.getAllTrainees());
         }
 
         @DeleteMapping("/delete/{traineeId}")
         public ResponseEntity<Boolean> deleteTrainee(
                         @PathVariable Long traineeId)
                         throws ResourceNotFoundException {
-
-                return ResponseEntity.ok(
-                                traineeService.deleteTrainee(traineeId));
+                return ResponseEntity.status(HttpStatus.OK).body(traineeService.deleteTrainee(traineeId));
         }
 
         @GetMapping("/department/{department}")
         public ResponseEntity<List<TraineeResponseDto>> getTraineesByDepartment(
                         @PathVariable String department) {
-
-                return ResponseEntity.ok(
-                                traineeService.getTraineesByDepartment(department));
+                return ResponseEntity.status(HttpStatus.OK).body(traineeService.getTraineesByDepartment(department));
+                                
         }
 
         @GetMapping("/status/{status}")
@@ -92,21 +84,16 @@ public class TraineeController {
 
         @GetMapping("/me")
         public ResponseEntity<TraineeResponseDto> getMyProfile() throws ResourceNotFoundException {
-
-                return ResponseEntity.ok(traineeService.getMyProfile());
+                return ResponseEntity.status(HttpStatus.OK).body(traineeService.getMyProfile());
         }
 
         @GetMapping("/inactive")
         public ResponseEntity<List<TraineeResponseDto>> getInactiveTrainees() {
-
-                return ResponseEntity.ok(
-                                traineeService.getInactiveTrainees());
+                return ResponseEntity.status(HttpStatus.OK).body(traineeService.getInactiveTrainees());
         }
 
         @GetMapping("/active")
         public ResponseEntity<List<TraineeResponseDto>> getActiveTrainees() {
-
-                return ResponseEntity.ok(
-                                traineeService.getActiveTrainees());
+                return ResponseEntity.status(HttpStatus.OK).body(traineeService.getActiveTrainees());
         }
 }

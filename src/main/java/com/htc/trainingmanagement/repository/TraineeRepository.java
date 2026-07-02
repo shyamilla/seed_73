@@ -22,4 +22,6 @@ public interface TraineeRepository extends JpaRepository<Trainee, Long> {
     List<Trainee> findByIsActiveFalse();
 
     List<Trainee> findByIsActiveTrue();
+
+    
 }

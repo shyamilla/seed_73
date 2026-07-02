@@ -8,11 +8,14 @@ import com.htc.trainingmanagement.dto.request.CourseRequestDto;
 import com.htc.trainingmanagement.dto.response.CourseAdminResponseDto;
 import com.htc.trainingmanagement.dto.response.CourseResponseDto;
 import com.htc.trainingmanagement.entity.Course;
+import com.htc.trainingmanagement.enums.BatchStatus;
 import com.htc.trainingmanagement.enums.CourseStatus;
+import com.htc.trainingmanagement.exception.CourseException;
 import com.htc.trainingmanagement.exception.DuplicateResourceException;
 import com.htc.trainingmanagement.exception.ResourceNotFoundException;
 import com.htc.trainingmanagement.mapper.CourseMapper;
 import com.htc.trainingmanagement.repository.CourseRepository;
+import com.htc.trainingmanagement.repository.TrainingBatchRepository;
 import com.htc.trainingmanagement.service.CourseService;
 
 import lombok.RequiredArgsConstructor;
@@ -23,6 +26,7 @@ public class CourseServiceImpl implements CourseService {
 
         private final CourseRepository courseRepository;
         private final CourseMapper courseMapper;
+        private final TrainingBatchRepository trainingBatchRepository;
 
         @Override
         public CourseResponseDto createCourse(CourseRequestDto requestDto)
@@ -61,9 +65,13 @@ public class CourseServiceImpl implements CourseService {
 
         @Override
         public CourseResponseDto updateCourse(Long courseId, CourseRequestDto requestDto)
-                        throws ResourceNotFoundException, DuplicateResourceException {
+                        throws ResourceNotFoundException, DuplicateResourceException, CourseException {
 
                 Course course = getCourseEntityById(courseId);
+
+                if (requestDto.getStatus() == CourseStatus.INACTIVE) {
+                        validateCourseCanBeInactive(course);
+                }
 
                 // Prevents updating a course with another existing course name.
                 if (!course.getCourseName().equalsIgnoreCase(requestDto.getCourseName())
@@ -81,9 +89,11 @@ public class CourseServiceImpl implements CourseService {
 
         @Override
         public boolean deleteCourse(Long courseId)
-                        throws ResourceNotFoundException {
+                        throws ResourceNotFoundException, CourseException {
 
                 Course course = getCourseEntityById(courseId);
+
+                validateCourseCanBeDeleted(courseId);
 
                 courseRepository.delete(course);
 
@@ -159,5 +169,28 @@ public class CourseServiceImpl implements CourseService {
                                 .orElseThrow(() -> new ResourceNotFoundException("Course not found"));
 
                 return courseMapper.toAdminResponseDto(course);
+        }
+
+        private void validateCourseCanBeDeleted(Long courseId)
+                        throws CourseException {
+
+                if (trainingBatchRepository.existsByCourseCourseId(courseId)) {
+                        throw new CourseException(
+                                        "Course cannot be deleted because batches are assigned to it.");
+                }
+        }
+
+        // Helper method to prevent making a course inactive if active batches exist.
+        private void validateCourseCanBeInactive(Course course)
+                        throws CourseException {
+
+                boolean hasActiveBatches = trainingBatchRepository.existsByCourseAndStatus(
+                                course,
+                                BatchStatus.ONGOING);
+
+                if (hasActiveBatches) {
+                        throw new CourseException(
+                                        "Course cannot be made inactive because active batches exist.");
+                }
         }
 }

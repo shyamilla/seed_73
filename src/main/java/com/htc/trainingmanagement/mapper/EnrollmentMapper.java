@@ -44,7 +44,7 @@ public class EnrollmentMapper {
                 enrollment.getEnrollmentDate(),
                 enrollment.getCompletionStatus(),
                 enrollment.getScore(),
-                enrollment.getFeedback(),
+                // enrollment.getFeedback(),
                 enrollment.getTrainee().getTraineeId(),
                 enrollment.getTrainee().getUser().getUserName(),
                 enrollment.getTrainingBatch().getTrainingbatchId(),

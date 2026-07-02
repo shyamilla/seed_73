@@ -18,7 +18,7 @@ public class EnrollmentResponseDto {
     private LocalDate enrollmentDate;
     private EnrollmentStatus completionStatus;
     private Double score;
-    private String feedback;
+    // private String feedback;
 
     private Long traineeId;
     private String traineeName;

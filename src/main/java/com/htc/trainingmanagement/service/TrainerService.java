@@ -20,6 +20,7 @@ public interface TrainerService {
         boolean deleteTrainer(Long trainerId)
                         throws ResourceNotFoundException;
 
+        // other
         List<TrainerResponseDto> getTrainersBySpecialization(String specialization);
 
         List<TrainerResponseDto> getExperiencedTrainers(Integer yearsOfExperience);

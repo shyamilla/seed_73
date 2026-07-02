@@ -53,6 +53,7 @@ public class TrainingBatchMapper {
                 trainingBatch.getStartDate(),
                 trainingBatch.getEndDate(),
                 trainingBatch.getCapacity(),
+                trainingBatch.getAvailableSeats(),
                 trainingBatch.getStatus(),
                 trainingBatch.getCourse().getCourseId(),
                 trainingBatch.getCourse().getCourseName(),
